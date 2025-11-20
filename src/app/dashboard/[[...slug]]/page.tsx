@@ -1,11 +1,18 @@
 import { DragDropZone } from '@/_shared/components/ui/drag-drop-zone';
 import { StorageGrid } from '@/_widgets/storage-grid/ui';
-import { getDashboardData } from '~/server/actions/dashboard.actions';
+import { extractLastUuid } from '~/app/_shared/lib/uuid.utils';
+import { getDashboardData, getFolderData } from '~/server/actions/dashboard.actions';
 
-export default async function DashboardPage() {
-  const { folders, documents } = await getDashboardData();
+export default async function DashboardPage({
+  params,
+}: {
+  params: { slug?: string[] };
+}) {
+  const folderId = extractLastUuid(params.slug || []);
 
-  console.log(folders, documents);
+  const { folders, documents } = folderId
+    ? await getFolderData(folderId)
+    : await getDashboardData();
 
   const handleFileDrop = async (file: File) => {
     'use server';
@@ -22,3 +29,4 @@ export default async function DashboardPage() {
     </div>
   )
 }
+

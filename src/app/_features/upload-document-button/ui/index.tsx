@@ -5,17 +5,21 @@ import { Button } from '~/app/_shared/components/ui/button';
 import { UploadDocumentModal } from '../components/upload-document-modal';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUrlFolder } from '~/app/_shared/hooks/useUrlFolder';
 
 export function UploadDocumentButton() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const folderId = useUrlFolder();
 
   const handleUploadDocument = async (file: File): Promise<{ success: boolean; error?: string }> => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      // Add folderId if you have folder context available
-      // formData.append('folderId', folderId);
+
+      if (folderId) {
+        formData.append('folderId', folderId);
+      }
 
       const response = await fetch('/api/upload', {
         method: 'POST',

@@ -1,8 +1,8 @@
 import { UserProfileMenu } from '@/_entities/user/components/user-profile-menu/ui';
-import { FolderOpen, Upload } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import { NewFolderButton } from '@/_features/new-folder-button/ui';
-import { Button } from '@/_shared/components/ui/button';
 import { UploadDocumentButton } from '~/app/_features/upload-document-button/ui';
+import Link from 'next/link';
 
 export function DashboardHeader() {
   return (
@@ -10,7 +10,9 @@ export function DashboardHeader() {
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-            <FolderOpen className="h-5 w-5 text-primary-foreground" />
+            <Link href="/dashboard">
+              <FolderOpen className="h-5 w-5 text-primary-foreground" />
+            </Link>
           </div>
           <div>
             <h1 className="text-xl font-semibold text-foreground">{"Data Room"}</h1>

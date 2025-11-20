@@ -1,7 +1,9 @@
 'use client';
 import { Edit2, FileText, Folder, MoreVertical, Trash2 } from 'lucide-react';
+import { FolderViewer } from '~/app/_features/folder-viewer/ui';
 import { Button } from '~/app/_shared/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/app/_shared/components/ui/dropdown-menu';
+import { formatDate, formatFileSize } from '~/app/_shared/lib/formatters.utils';
 import type { DocumentModel } from '~/server/db/schema';
 import type { FolderModel } from '~/server/db/schema/folders';
 
@@ -36,19 +38,6 @@ export function StorageGrid({ folders, documents }: StorageGridProps) {
     console.log(fileId);
   }
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date)
-  }
 
   return (
     <div className="p-6">
@@ -65,43 +54,7 @@ export function StorageGrid({ folders, documents }: StorageGridProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {folders.map((folder) => (
-            <div
-              key={folder.id}
-              className="group relative rounded-lg border border-border bg-card hover:border-primary hover:shadow-md transition-all cursor-pointer"
-            >
-              <div onClick={() => handleFolderClick(folder.id)} className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/15">
-                    <Folder className="h-6 w-6 text-accent" />
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleFolderRename(folder.id)}>
-                        <Edit2 className="mr-2 h-4 w-4" />
-                        {"Rename"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleFolderDelete(folder.id)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        {"Delete"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {documents.length} {" items"}
-                </p>
-              </div>
-            </div>
+            <FolderViewer key={folder.id} folder={folder} />
           ))}
 
           {documents.map((file) => (
