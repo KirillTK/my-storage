@@ -1,12 +1,17 @@
 'use client';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/_shared/components/ui/dropdown-menu';
 import { Edit2, Folder, MoreVertical, Trash2 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '~/app/_shared/components/ui/button';
-import type { FolderModel } from '~/server/db/schema';
+import type { FolderWithChildrenAndDocumentsModel } from '~/server/db/schema';
 
-export function FolderViewer({ folder }: { folder: FolderModel }) {
+
+interface FolderViewerProps {
+  folder: FolderWithChildrenAndDocumentsModel;
+}
+
+export function FolderViewer({ folder }: FolderViewerProps) {
   const router = useRouter();
 
   const handleFolderClick = (folderId: string) => {
@@ -21,6 +26,8 @@ export function FolderViewer({ folder }: { folder: FolderModel }) {
   const handleFolderDelete = (folderId: string) => {
     console.log(folderId);
   }
+
+  const totalItems = (folder.documents?.length || 0) + (folder.children?.length || 0);
 
   return (
     <div
@@ -56,7 +63,7 @@ export function FolderViewer({ folder }: { folder: FolderModel }) {
         </div>
         <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>
         <p className="text-xs text-muted-foreground">
-          {0} {" items"}
+          {totalItems} {" items"}
         </p>
       </div>
     </div>

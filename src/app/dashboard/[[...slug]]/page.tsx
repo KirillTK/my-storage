@@ -12,6 +12,8 @@ export default async function DashboardPage({
 
   const { folders, documents } = await getStorageData(folderId);
 
+  console.log(folders, documents);
+
   const handleFileDrop = async (file: File) => {
     'use server';
     console.log(file);

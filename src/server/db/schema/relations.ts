@@ -24,8 +24,11 @@ export const foldersRelations = relations(folders, ({ one, many }) => ({
   parent: one(folders, {
     fields: [folders.parentFolderId],
     references: [folders.id],
+    relationName: "parentFolder", // Add explicit relation name
   }),
-  children: many(folders),
+  children: many(folders, {
+    relationName: "parentFolder", // Specify it's the inverse of parentFolder
+  }),
   documents: many(documents),
   owner: one(users, {
     fields: [folders.ownerId],

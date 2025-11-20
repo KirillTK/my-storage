@@ -5,10 +5,10 @@ import { Button } from '~/app/_shared/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/app/_shared/components/ui/dropdown-menu';
 import { formatDate, formatFileSize } from '~/app/_shared/lib/formatters.utils';
 import type { DocumentModel } from '~/server/db/schema';
-import type { FolderModel } from '~/server/db/schema/folders';
+import type { FolderModel, FolderWithChildrenAndDocumentsModel } from '~/server/db/schema/folders';
 
 interface StorageGridProps {
-  folders: FolderModel[];
+  folders: FolderWithChildrenAndDocumentsModel[];
   documents: DocumentModel[];
 }
 

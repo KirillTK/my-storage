@@ -3,6 +3,7 @@ import { text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createTable } from "./base";
 import { users } from "./users";
 import type { InferSelectModel } from "drizzle-orm";
+import type { DocumentModel } from "./documents";
 
 // Folders table
 export const folders = createTable(
@@ -26,3 +27,10 @@ export const folders = createTable(
 );
 
 export type FolderModel = InferSelectModel<typeof folders>;
+
+export type FolderWithChildrenAndDocumentsModel = InferSelectModel<
+  typeof folders
+> & {
+  children: FolderModel[];
+  documents: DocumentModel[];
+};
