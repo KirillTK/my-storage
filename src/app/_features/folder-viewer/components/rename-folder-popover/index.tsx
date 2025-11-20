@@ -1,0 +1,130 @@
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import { PopoverContent } from '@/_shared/components/ui/popover';
+import { Input } from '@/_shared/components/ui/input';
+import { Button } from '@/_shared/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { renameFolder } from '~/server/actions/folder.actions';
+
+interface RenameFolderPopoverProps {
+  folderId: string;
+  currentName: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function RenameFolderPopover({
+  folderId,
+  currentName,
+  isOpen,
+  onOpenChange,
+}: RenameFolderPopoverProps) {
+  const router = useRouter();
+  const [newFolderName, setNewFolderName] = useState(currentName);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const justOpenedRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setNewFolderName(currentName);
+      justOpenedRef.current = true;
+      // Reset the flag after a short delay to prevent immediate closing
+      const timer = setTimeout(() => {
+        justOpenedRef.current = false;
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, currentName]);
+
+  const handleOpenChange = (open: boolean) => {
+    // Prevent closing immediately after opening (within 200ms)
+    if (!open && justOpenedRef.current) {
+      return;
+    }
+    onOpenChange(open);
+  };
+
+  const handleSave = async () => {
+    if (!newFolderName.trim() || newFolderName === currentName) {
+      onOpenChange(false);
+      return;
+    }
+
+    setIsRenaming(true);
+    try {
+      await renameFolder(folderId, newFolderName.trim());
+      onOpenChange(false);
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+    } finally {
+      setIsRenaming(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setNewFolderName(currentName);
+    onOpenChange(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isRenaming) {
+      handleSave();
+    }
+    if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <PopoverContent 
+      className="w-80" 
+      onClick={(e) => e.stopPropagation()}
+      align="start"
+      side="bottom"
+      sideOffset={8}
+    >
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm">Rename Folder</h4>
+          <Input
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            placeholder="Folder name"
+            onKeyDown={handleKeyDown}
+            disabled={isRenaming}
+            autoFocus
+          />
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCancel}
+            disabled={isRenaming}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={isRenaming || !newFolderName.trim() || newFolderName === currentName}
+          >
+            {isRenaming ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Save'
+            )}
+          </Button>
+        </div>
+      </div>
+    </PopoverContent>
+  );
+}
+

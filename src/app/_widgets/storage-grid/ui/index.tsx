@@ -14,17 +14,7 @@ interface StorageGridProps {
 
 export function StorageGrid({ folders, documents }: StorageGridProps) {
 
-  const handleFolderClick = (folderId: string) => {
-    console.log(folderId);
-  }
 
-  const handleFolderRename = (folderId: string) => {
-    console.log(folderId);
-  }
-
-  const handleFolderDelete = (folderId: string) => {
-    console.log(folderId);
-  }
 
   const handleFileClick = (file: DocumentModel) => {
     console.log(file);
