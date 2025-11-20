@@ -1,13 +1,14 @@
-import { pgTable, text, timestamp, uuid, integer } from 'drizzle-orm/pg-core';
+import { integer, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
+import { createTable } from './base';
 import { folders } from './folders';
 import { users } from './users';
 
 // Documents table
-export const documents = pgTable('documents', {
+export const documents = createTable('documents', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
-  folderId: uuid('folder_id').references(() => folders.id, { onDelete: 'cascade' }).notNull(),
+  folderId: uuid('folder_id').references(() => folders.id, { onDelete: 'cascade' }), // null means root level
   uploadedById: text('uploaded_by_id').references(() => users.id).notNull(),
   
   // Vercel Blob metadata

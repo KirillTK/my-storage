@@ -1,6 +1,7 @@
 import { UserProfileMenu } from '@/_entities/user/components/user-profile-menu/ui';
-import { FolderOpen, Plus, Upload } from 'lucide-react';
-import { Button } from '~/app/_shared/components/ui/button';
+import { FolderOpen, Upload } from 'lucide-react';
+import { NewFolderButton } from '@/_features/new-folder-button/ui';
+import { Button } from '@/_shared/components/ui/button';
 
 export function DashboardHeader() {
   return (
@@ -17,10 +18,7 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2 bg-transparent">
-            <Plus className="h-4 w-4" />
-            {"New Folder"}
-          </Button>
+          <NewFolderButton />
           <Button className="gap-2">
             <Upload className="h-4 w-4" />
             {"Upload"}
