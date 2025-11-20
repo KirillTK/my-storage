@@ -3,7 +3,11 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/_shared/components/ui/ava
 import { auth, signOut } from '~/server/auth';
 import Link from 'next/link';
 
-export async function UserProfileMenu() {
+interface UserProfileMenuProps {
+  hideDashboardLink?: boolean;
+}
+
+export async function UserProfileMenu({ hideDashboardLink = false }: UserProfileMenuProps) {
   const session = await auth();
 
   const handleSignOut = async () => {
@@ -18,12 +22,13 @@ export async function UserProfileMenu() {
           <AvatarImage src={session?.user.image!} />
           <AvatarFallback>{session?.user.name?.charAt(0)}</AvatarFallback>
         </Avatar>
-
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
-          <Link href="/dashboard">Dashboard</Link>
-        </DropdownMenuItem>
+        {!hideDashboardLink && (
+          <DropdownMenuItem>
+            <Link href="/dashboard">Dashboard</Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={handleSignOut}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
