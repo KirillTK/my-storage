@@ -3,9 +3,9 @@ import { StorageGrid } from '@/_widgets/storage-grid/ui';
 import { getDashboardData } from '~/server/actions/dashboard.actions';
 
 export default async function DashboardPage() {
-  const { items } = await getDashboardData();
+  const { folders, documents } = await getDashboardData();
 
-  console.log(items);
+  console.log(folders, documents);
 
   const handleFileDrop = async (file: File) => {
     'use server';
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen flex flex-col">
       <DragDropZone onFileDrop={handleFileDrop}>
         <div className="flex-1 overflow-auto">
-          <StorageGrid />
+          <StorageGrid folders={folders} documents={documents} />
         </div>
       </DragDropZone>
     </div>
