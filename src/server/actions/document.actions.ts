@@ -1,5 +1,5 @@
 'use server';
-import { del, put, type PutBlobResult } from "@vercel/blob";
+import { put, type PutBlobResult } from "@vercel/blob";
 import { eq, isNull, and, asc, sql } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
@@ -33,7 +33,7 @@ export const createDocument = async (file: File, folderId: string | null) => {
     .insert(documents)
     .values({
       name: file.name,
-      folderId: folderId || null,
+      folderId: folderId ?? null,
       uploadedById: session.user.id,
       blobUrl: blob.url,
       blobPathname: blob.pathname,

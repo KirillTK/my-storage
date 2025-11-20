@@ -103,7 +103,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
+    const files = Array.from(e.target.files ?? [])
     if (files.length > 0) {
       addFiles(files)
       // Reset input so the same file can be selected again
@@ -194,7 +194,8 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
         } else {
           errorCount++
         }
-      } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_: unknown) {
         setSelectedFiles((prev) =>
           prev.map((f) =>
             f.id === fileWithStatus.id

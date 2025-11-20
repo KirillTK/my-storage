@@ -19,7 +19,7 @@ export async function UserProfileMenu({ hideDashboardLink = false }: UserProfile
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src={session?.user.image!} />
+          <AvatarImage src={session?.user.image ?? ''} />
           <AvatarFallback>{session?.user.name?.charAt(0)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

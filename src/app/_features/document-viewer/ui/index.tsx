@@ -36,6 +36,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
         description: 'You can undo this action',
         action: {
           label: 'Undo',
+          //eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick: async () => {
             try {
               await restoreDocument(document.id);
@@ -76,7 +77,6 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 <FileText className="h-6 w-6 text-primary" />
               </div>
               <DocumentActionsMenu
-                documentId={document.id}
                 onRename={handleDocumentRename}
                 onDelete={handleDocumentDelete}
               />
@@ -92,7 +92,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
         <RenameDocumentPopover
           documentId={document.id}
           currentName={fileNameWithoutExtension}
-          fileExtension={fileExtension || ''}
+          fileExtension={fileExtension ?? ''}
           isOpen={isRenamePopoverOpen}
           onOpenChange={setIsRenamePopoverOpen}
         />

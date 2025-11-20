@@ -37,14 +37,6 @@ export function RenameFolderPopover({
     }
   }, [isOpen, currentName]);
 
-  const handleOpenChange = (open: boolean) => {
-    // Prevent closing immediately after opening (within 200ms)
-    if (!open && justOpenedRef.current) {
-      return;
-    }
-    onOpenChange(open);
-  };
-
   const handleSave = async () => {
     if (!newFolderName.trim() || newFolderName === currentName) {
       onOpenChange(false);
@@ -68,20 +60,26 @@ export function RenameFolderPopover({
     onOpenChange(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isRenaming) {
-      handleSave();
-    }
-    if (e.key === 'Escape') {
-      handleCancel();
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    try {
+      if (e.key === 'Enter' && !isRenaming) {
+        await handleSave();
+      }
+      if (e.key === 'Escape') {
+        handleCancel();
+      }
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+    } finally {
+      setIsRenaming(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <PopoverContent 
-      className="w-80" 
+    <PopoverContent
+      className="w-80"
       onClick={(e) => e.stopPropagation()}
       align="start"
       side="bottom"

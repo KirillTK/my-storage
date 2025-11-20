@@ -66,12 +66,18 @@ export function RenameDocumentPopover({
     onOpenChange(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isRenaming) {
-      handleSave();
-    }
-    if (e.key === 'Escape') {
-      handleCancel();
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    try {
+      if (e.key === 'Enter' && !isRenaming) {
+        await handleSave();
+      }
+      if (e.key === 'Escape') {
+        handleCancel();
+      }
+    } catch (error) {
+      console.error('Failed to rename document:', error);
+    } finally {
+      setIsRenaming(false);
     }
   };
 

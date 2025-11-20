@@ -1,9 +1,6 @@
-import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { createDocument } from "~/server/actions/document.actions";
 import { auth } from "~/server/auth";
-import { db } from "~/server/db";
-import { documents } from "~/server/db/schema";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 

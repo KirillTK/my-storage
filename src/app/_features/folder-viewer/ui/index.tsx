@@ -35,6 +35,7 @@ export function FolderViewer({ folder }: FolderViewerProps) {
         description: 'You can undo this action',
         action: {
           label: 'Undo',
+          //eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick: async () => {
             try {
               await restoreFolder(folder.id);
@@ -51,7 +52,7 @@ export function FolderViewer({ folder }: FolderViewerProps) {
       // Navigate to parent folder or root after deletion
       const redirectUrl = folder.parentFolderId ? `/dashboard/${folder.parentFolderId}` : '/dashboard';
       router.push(redirectUrl);
-      
+
       router.refresh();
     } catch (error) {
       console.error('Failed to delete folder:', error);
@@ -77,7 +78,6 @@ export function FolderViewer({ folder }: FolderViewerProps) {
                 <Folder className="h-6 w-6 text-accent" />
               </div>
               <FolderActionsMenu
-                folderId={folder.id}
                 onRename={handleFolderRename}
                 onDelete={handleFolderDelete}
               />

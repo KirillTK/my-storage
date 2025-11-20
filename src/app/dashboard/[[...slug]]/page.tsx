@@ -6,9 +6,10 @@ import { getStorageData } from '~/server/actions/dashboard.actions';
 export default async function DashboardPage({
   params,
 }: {
-  params: { slug?: string[] };
+  params: Promise<{ slug?: string[] }>;
 }) {
-  const folderId = extractLastUuid(params.slug || []);
+  const { slug } = await params;
+  const folderId = extractLastUuid(slug ?? []);
 
   const { folders, documents } = await getStorageData(folderId);
 

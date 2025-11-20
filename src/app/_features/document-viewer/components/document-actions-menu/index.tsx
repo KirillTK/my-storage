@@ -5,13 +5,11 @@ import { Button } from '@/_shared/components/ui/button';
 import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
 
 interface DocumentActionsMenuProps {
-  documentId: string;
   onRename: () => void;
   onDelete: () => void;
 }
 
 export function DocumentActionsMenu({
-  documentId,
   onRename,
   onDelete,
 }: DocumentActionsMenuProps) {

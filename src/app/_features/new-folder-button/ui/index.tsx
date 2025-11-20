@@ -15,7 +15,7 @@ export function NewFolderButton() {
 
   const handleNewFolder = async (name: string) => {
     try {
-      await createFolder(name, folderId || null);
+      await createFolder(name, folderId ?? null);
       setOpen(false);
       router.refresh();
     } catch (error) {

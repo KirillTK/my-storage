@@ -8,7 +8,7 @@ export function useUrlFolder() {
 
   useEffect(() => {
     const id = extractLastUuid((params?.slug as string[]) || []);
-    setFolderId(id || null);
+    setFolderId(id ?? null);
   }, [params?.slug, setFolderId]);
 
   return folderId;

@@ -26,12 +26,12 @@ export function UploadDocumentButton() {
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await response.json() as { error?: string };
 
       if (!response.ok) {
         return {
           success: false,
-          error: data.error || 'Failed to upload file. Please try again.',
+          error: data.error ?? 'Failed to upload file. Please try again.',
         };
       }
 
