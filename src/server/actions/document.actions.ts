@@ -1,5 +1,5 @@
 import { del, put, type PutBlobResult } from "@vercel/blob";
-import { eq } from "drizzle-orm";
+import { eq, isNull, and, asc } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema";
@@ -77,4 +77,35 @@ export const deleteDocument = async (documentId: string) => {
 
   // Delete from database
   await db.delete(documents).where(eq(documents.id, documentId));
+};
+
+export const renameDocument = async (documentId: string, name: string) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  await db.update(documents).set({ name }).where(eq(documents.id, documentId));
+};
+
+export const getDocumentsByFolderId = async (folderId: string | null) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  return await db
+    .select()
+    .from(documents)
+    .where(
+      and(
+        eq(documents.uploadedById, session.user.id),
+        folderId
+          ? eq(documents.folderId, folderId)
+          : isNull(documents.folderId),
+      ),
+    )
+    .orderBy(asc(documents.createdAt));
 };
