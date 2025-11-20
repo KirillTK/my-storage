@@ -1,5 +1,6 @@
 "use server";
 import { eq, isNull, and } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { folders } from "../db/schema";
@@ -40,7 +41,25 @@ export const deleteFolder = async (folderId: string) => {
     throw new Error("Unauthorized");
   }
 
-  await db.delete(folders).where(eq(folders.id, folderId));
+  // Soft delete: set deletedAt timestamp
+  await db
+    .update(folders)
+    .set({ deletedAt: sql`NOW()` })
+    .where(eq(folders.id, folderId));
+};
+
+export const restoreFolder = async (folderId: string) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // Restore: set deletedAt to null
+  await db
+    .update(folders)
+    .set({ deletedAt: null })
+    .where(eq(folders.id, folderId));
 };
 
 export const getFoldersByParentFolderId = async (
@@ -58,6 +77,7 @@ export const getFoldersByParentFolderId = async (
       parentFolderId
         ? eq(folders.parentFolderId, parentFolderId)
         : isNull(folders.parentFolderId),
+      isNull(folders.deletedAt), // Only return non-deleted folders
     ),
     with: {
       children: true,

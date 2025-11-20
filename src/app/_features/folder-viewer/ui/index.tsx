@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import { Folder } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import type { FolderWithChildrenAndDocumentsModel } from '~/server/db/schema';
 import { FolderActionsMenu } from '../components/folder-actions-menu';
 import { RenameFolderPopover } from '../components/rename-folder-popover';
 import { Popover, PopoverAnchor } from '@/_shared/components/ui/popover';
+import { deleteFolder, restoreFolder } from '~/server/actions/folder.actions';
 
 interface FolderViewerProps {
   folder: FolderWithChildrenAndDocumentsModel;
@@ -24,8 +26,37 @@ export function FolderViewer({ folder }: FolderViewerProps) {
     setIsRenamePopoverOpen(true);
   };
 
-  const handleFolderDelete = (folderId: string) => {
-    console.log(folderId);
+  const handleFolderDelete = async () => {
+    try {
+      await deleteFolder(folder.id);
+
+      // Show toast with undo action
+      toast(`Folder "${folder.name}" has been deleted`, {
+        description: 'You can undo this action',
+        action: {
+          label: 'Undo',
+          onClick: async () => {
+            try {
+              await restoreFolder(folder.id);
+              router.refresh();
+              toast.success('Folder restored');
+            } catch (error) {
+              console.error('Failed to restore folder:', error);
+              toast.error('Failed to restore folder');
+            }
+          },
+        },
+      });
+
+      // Navigate to parent folder or root after deletion
+      const redirectUrl = folder.parentFolderId ? `/dashboard/${folder.parentFolderId}` : '/dashboard';
+      router.push(redirectUrl);
+      
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      toast.error('Failed to delete folder');
+    }
   };
 
   const totalItems = (folder.documents?.length || 0) + (folder.children?.length || 0);
@@ -48,7 +79,7 @@ export function FolderViewer({ folder }: FolderViewerProps) {
               <FolderActionsMenu
                 folderId={folder.id}
                 onRename={handleFolderRename}
-                onDelete={() => handleFolderDelete(folder.id)}
+                onDelete={handleFolderDelete}
               />
             </div>
             <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>

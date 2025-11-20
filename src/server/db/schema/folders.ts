@@ -15,6 +15,7 @@ export const folders = createTable(
     ownerId: text("owner_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
+    deletedAt: timestamp("deleted_at"), // NULL = not deleted, timestamp = soft deleted
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
