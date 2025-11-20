@@ -24,6 +24,7 @@ export function CreateFolderDialog({ open, onOpenChange, onConfirm }: CreateFold
     e.preventDefault()
     if (name.trim()) {
       onConfirm(name.trim())
+      setName("")
     }
   }
 

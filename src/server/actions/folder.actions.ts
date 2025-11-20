@@ -87,3 +87,42 @@ export const getFoldersByParentFolderId = async (
     orderBy: (folders, { asc }) => [asc(folders.createdAt)],
   });
 };
+
+export const getFolderPath = async (folderId: string | null) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!folderId) {
+    return [];
+  }
+
+  const path: Array<{ id: string; name: string }> = [];
+  let currentFolderId: string | null = folderId;
+
+  while (currentFolderId) {
+    const folder: { id: string; name: string; parentFolderId: string | null } | undefined = await db.query.folders.findFirst({
+      where: and(
+        eq(folders.id, currentFolderId),
+        eq(folders.ownerId, session.user.id),
+        isNull(folders.deletedAt),
+      ),
+      columns: {
+        id: true,
+        name: true,
+        parentFolderId: true,
+      },
+    });
+
+    if (!folder) {
+      break;
+    }
+
+    path.unshift({ id: folder.id, name: folder.name });
+    currentFolderId = folder.parentFolderId;
+  }
+
+  return path;
+};

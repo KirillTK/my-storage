@@ -8,6 +8,7 @@ import { FolderActionsMenu } from '../components/folder-actions-menu';
 import { RenameFolderPopover } from '../components/rename-folder-popover';
 import { Popover, PopoverAnchor } from '@/_shared/components/ui/popover';
 import { deleteFolder, restoreFolder } from '~/server/actions/folder.actions';
+import Link from 'next/link';
 
 interface FolderViewerProps {
   folder: FolderWithChildrenAndDocumentsModel;
@@ -17,10 +18,6 @@ export function FolderViewer({ folder }: FolderViewerProps) {
   const router = useRouter();
   const [isRenamePopoverOpen, setIsRenamePopoverOpen] = useState(false);
 
-  const handleFolderClick = (folderId: string) => {
-    console.log(folderId);
-    router.push(`/dashboard/${folderId}`);
-  };
 
   const handleFolderRename = () => {
     setIsRenamePopoverOpen(true);
@@ -72,21 +69,24 @@ export function FolderViewer({ folder }: FolderViewerProps) {
           <PopoverAnchor asChild>
             <div className="absolute inset-0 pointer-events-none" />
           </PopoverAnchor>
-          <div onClick={() => handleFolderClick(folder.id)} className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/15">
-                <Folder className="h-6 w-6 text-accent" />
+
+          <Link href={`/dashboard/${folder.id}`}>
+            <div className="p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/15">
+                  <Folder className="h-6 w-6 text-accent" />
+                </div>
+                <FolderActionsMenu
+                  onRename={handleFolderRename}
+                  onDelete={handleFolderDelete}
+                />
               </div>
-              <FolderActionsMenu
-                onRename={handleFolderRename}
-                onDelete={handleFolderDelete}
-              />
+              <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>
+              <p className="text-xs text-muted-foreground">
+                {totalItems} items
+              </p>
             </div>
-            <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>
-            <p className="text-xs text-muted-foreground">
-              {totalItems} items
-            </p>
-          </div>
+          </Link>
         </div>
 
         <RenameFolderPopover

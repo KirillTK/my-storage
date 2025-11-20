@@ -12,7 +12,7 @@ interface StorageGridProps {
 
 export function StorageGrid({ folders, documents }: StorageGridProps) {
   return (
-    <div className="p-6">
+    <div>
       {folders.length === 0 && documents.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <div className="rounded-full bg-muted p-4 mb-4">
