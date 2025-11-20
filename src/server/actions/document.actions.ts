@@ -1,6 +1,22 @@
+import { del, put, type PutBlobResult } from "@vercel/blob";
+import { eq } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema";
+
+async function putDocumentInBucket(
+  file: File,
+  userId: string,
+): Promise<PutBlobResult> {
+  const timestamp = Date.now();
+  const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const blobPathname = `documents/${userId}/${timestamp}-${sanitizedFileName}`;
+  const blob = await put(blobPathname, file, {
+    access: "public",
+    addRandomSuffix: false,
+  });
+  return blob;
+}
 
 export const createDocument = async (file: File, folderId: string | null) => {
   const session = await auth();
@@ -9,15 +25,56 @@ export const createDocument = async (file: File, folderId: string | null) => {
     throw new Error("Unauthorized");
   }
 
-  const newDocument = await db.insert(documents).values({
-    name: file.name,
-    folderId,
-    uploadedById: session.user.id,
-    blobUrl: "",
-    blobPathname: "",
-    fileSize: file.size,
-    mimeType: file.type,
-    version: 1,
-    previousVersionId: null,
-  });
+  const blob = await putDocumentInBucket(file, session.user.id);
+
+  // Save metadata to database
+  const [newDocument] = await db
+    .insert(documents)
+    .values({
+      name: file.name,
+      folderId: folderId || null,
+      uploadedById: session.user.id,
+      blobUrl: blob.url,
+      blobPathname: blob.pathname,
+      fileSize: file.size,
+      mimeType: file.type,
+      version: 1,
+      previousVersionId: null,
+    })
+    .returning();
+
+  return newDocument;
+};
+
+export const deleteDocument = async (documentId: string) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  // Get document to verify ownership and get blob URL
+  const [document] = await db
+    .select()
+    .from(documents)
+    .where(eq(documents.id, documentId));
+
+  if (!document) {
+    throw new Error("Document not found");
+  }
+
+  if (document.uploadedById !== session.user.id) {
+    throw new Error("Unauthorized to delete this document");
+  }
+
+  // Delete from blob storage
+  try {
+    await del(document.blobUrl);
+  } catch (error) {
+    console.error("Failed to delete blob:", error);
+    // Continue with database deletion even if blob deletion fails
+  }
+
+  // Delete from database
+  await db.delete(documents).where(eq(documents.id, documentId));
 };
