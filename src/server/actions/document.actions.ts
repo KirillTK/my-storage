@@ -1,5 +1,6 @@
+'use server';
 import { del, put, type PutBlobResult } from "@vercel/blob";
-import { eq, isNull, and, asc } from "drizzle-orm";
+import { eq, isNull, and, asc, sql } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema";
@@ -46,6 +47,18 @@ export const createDocument = async (file: File, folderId: string | null) => {
   return newDocument;
 };
 
+export const restoreDocument = async (documentId: string) => {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  return await db
+    .update(documents)
+    .set({ deletedAt: null })
+    .where(eq(documents.id, documentId));
+};
+
 export const deleteDocument = async (documentId: string) => {
   const session = await auth();
 
@@ -68,15 +81,10 @@ export const deleteDocument = async (documentId: string) => {
   }
 
   // Delete from blob storage
-  try {
-    await del(document.blobUrl);
-  } catch (error) {
-    console.error("Failed to delete blob:", error);
-    // Continue with database deletion even if blob deletion fails
-  }
-
-  // Delete from database
-  await db.delete(documents).where(eq(documents.id, documentId));
+  return await db
+    .update(documents)
+    .set({ deletedAt: sql`NOW()` })
+    .where(eq(documents.id, documentId));
 };
 
 export const renameDocument = async (documentId: string, name: string) => {
@@ -105,6 +113,7 @@ export const getDocumentsByFolderId = async (folderId: string | null) => {
         folderId
           ? eq(documents.folderId, folderId)
           : isNull(documents.folderId),
+        isNull(documents.deletedAt), // Only return non-deleted documents
       ),
     )
     .orderBy(asc(documents.createdAt));

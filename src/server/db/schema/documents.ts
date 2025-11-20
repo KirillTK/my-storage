@@ -26,6 +26,9 @@ export const documents = createTable("documents", {
   version: integer("version").default(1).notNull(),
   previousVersionId: uuid("previous_version_id"),
 
+  // Soft delete
+  deletedAt: timestamp("deleted_at"), // NULL = not deleted, timestamp = soft deleted
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
