@@ -15,19 +15,10 @@ import {
 import { Button } from "~/app/_shared/components/ui/button"
 import { formatFileSize } from '~/app/_shared/lib/formatters.utils'
 
-type UploadProgress = {
-  percentage: number;
-  loaded: number;
-  total: number;
-};
-
 interface UploadDocumentModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (
-    file: File,
-    onProgress?: (progress: UploadProgress) => void,
-  ) => Promise<{ success: boolean; error?: string }>
+  onConfirm: (files: File[]) => void
 }
 
 interface FileWithStatus {
@@ -35,14 +26,10 @@ interface FileWithStatus {
   file: File
   name: string
   size: number
-  status?: 'pending' | 'uploading' | 'success' | 'error'
-  error?: string
-  progress?: number
 }
 
 export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDocumentModalProps) {
   const [selectedFiles, setSelectedFiles] = useState<FileWithStatus[]>([])
-  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const dragCounter = useRef(0)
@@ -70,10 +57,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
   const addFiles = (files: File[]) => {
     setError(null)
 
-    // Only count files that are not successfully uploaded (pending, uploading, error, or undefined)
-    const currentFileCount = selectedFiles.filter(
-      (f) => f.status !== 'success'
-    ).length
+    const currentFileCount = selectedFiles.length
     const newFilesCount = files.length
     const totalFiles = currentFileCount + newFilesCount
 
@@ -81,11 +65,10 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
     if (totalFiles > MAX_FILES) {
       const remainingSlots = MAX_FILES - currentFileCount
       if (remainingSlots <= 0) {
-        setError(`Maximum file limit reached. You can upload up to ${MAX_FILES} files at once. Please remove some files or wait for uploads to complete.`)
+        setError(`Maximum file limit reached. You can upload up to ${MAX_FILES} files at once.`)
         return
       } else {
         setError(`You can only add ${remainingSlots} more file${remainingSlots !== 1 ? 's' : ''}. Maximum limit is ${MAX_FILES} files.`)
-        // Only process files up to the limit
         filesToProcess = files.slice(0, remainingSlots)
       }
     }
@@ -102,10 +85,8 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
         file,
         name: file.name,
         size: file.size,
-        status: 'pending' as const,
       }))
       setSelectedFiles((prev) => [...prev, ...filesWithStatus])
-      // Clear error if files were successfully added
       if (errors.length === 0) {
         setError(null)
       }
@@ -160,114 +141,35 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
     }
   }
 
-  const handleSubmit = async () => {
-    const pendingFiles = selectedFiles.filter((f) => f.status === 'pending' || !f.status)
-
-    if (pendingFiles.length === 0) {
+  const handleSubmit = () => {
+    if (selectedFiles.length === 0) {
       return
     }
 
-    setUploading(true)
+    const files = selectedFiles.map((f) => f.file)
+    
+    // Clear selected files and close modal
+    setSelectedFiles([])
     setError(null)
-
-    // Update all files to uploading status
-    setSelectedFiles((prev) =>
-      prev.map((f) =>
-        pendingFiles.some((pf) => pf.id === f.id)
-          ? { ...f, status: 'uploading' as const }
-          : f
-      )
-    )
-
-    let successCount = 0
-    let errorCount = 0
-
-    // Upload files sequentially
-    for (const fileWithStatus of pendingFiles) {
-      try {
-        const result = await onConfirm(fileWithStatus.file, (progress) => {
-          // Update progress for this file
-          setSelectedFiles((prev) =>
-            prev.map((f) =>
-              f.id === fileWithStatus.id
-                ? {
-                  ...f,
-                  progress: progress.percentage,
-                }
-                : f
-            )
-          )
-        })
-
-        setSelectedFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileWithStatus.id
-              ? {
-                ...f,
-                status: result.success ? ('success' as const) : ('error' as const),
-                error: result.error,
-                progress: result.success ? 100 : undefined,
-              }
-              : f
-          )
-        )
-
-        if (result.success) {
-          successCount++
-        } else {
-          errorCount++
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (_: unknown) {
-        setSelectedFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileWithStatus.id
-              ? {
-                ...f,
-                status: 'error' as const,
-                error: 'An unexpected error occurred. Please try again.',
-                progress: undefined,
-              }
-              : f
-          )
-        )
-        errorCount++
-      }
-    }
-
-    setUploading(false)
-
-    // Close modal if all files uploaded successfully
-    if (errorCount === 0 && successCount > 0) {
-      setTimeout(() => {
-        setSelectedFiles([])
-        onOpenChange(false)
-      }, 1000)
-    }
+    
+    // Call onConfirm which handles upload with toasts
+    onConfirm(files)
+    onOpenChange(false)
   }
 
   const handleClose = () => {
-    if (!uploading) {
-      setSelectedFiles([])
-      setError(null)
-      onOpenChange(false)
-    }
+    setSelectedFiles([])
+    setError(null)
+    onOpenChange(false)
   }
 
   const removeFile = (fileId: string) => {
     setSelectedFiles((prev) => prev.filter((f) => f.id !== fileId))
-    // Clear error when removing files, as it might free up slots
     setError(null)
   }
 
-
-  const pendingFiles = selectedFiles.filter((f) => f.status === 'pending' || !f.status)
-  const uploadingFiles = selectedFiles.filter((f) => f.status === 'uploading')
-  const hasPendingFiles = pendingFiles.length > 0
-
-  // Count only files that can still be uploaded (not success status)
-  const uploadableFilesCount = selectedFiles.filter((f) => f.status !== 'success').length
-  const canAddMoreFiles = uploadableFilesCount < MAX_FILES
+  const hasFiles = selectedFiles.length > 0
+  const canAddMoreFiles = selectedFiles.length < MAX_FILES
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -291,7 +193,6 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
             multiple
             onChange={handleFileSelect}
             className="hidden"
-            disabled={uploading}
           />
 
           {error && (
@@ -312,8 +213,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className={`w-full border-2 border-dashed rounded-lg p-8 transition-colors cursor-pointer group disabled:cursor-not-allowed disabled:opacity-50 ${isDragging
+                className={`w-full border-2 border-dashed rounded-lg p-8 transition-colors cursor-pointer group ${isDragging
                   ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-primary'
                   }`}
@@ -342,71 +242,25 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                   {selectedFiles.map((file) => (
                     <div
                       key={file.id}
-                      className={`border rounded-lg p-4 flex items-center justify-between ${file.status === 'success'
-                        ? 'border-green-500/50 bg-green-500/10'
-                        : file.status === 'error'
-                          ? 'border-destructive/50 bg-destructive/10'
-                          : file.status === 'uploading'
-                            ? 'border-primary/50 bg-primary/10'
-                            : 'border-border'
-                        }`}
+                      className="border rounded-lg p-4 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-lg shrink-0 ${file.status === 'success'
-                          ? 'bg-green-500/20'
-                          : file.status === 'error'
-                            ? 'bg-destructive/20'
-                            : 'bg-primary/15'
-                          }`}>
-                          <FileText className={`h-5 w-5 ${file.status === 'success'
-                            ? 'text-green-600'
-                            : file.status === 'error'
-                              ? 'text-destructive'
-                              : 'text-primary'
-                            }`} />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg shrink-0 bg-primary/15">
+                          <FileText className="h-5 w-5 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-foreground truncate">
                             {file.name}
                           </p>
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <p className="text-xs text-muted-foreground">
-                                {formatFileSize(file.size)}
-                              </p>
-                              {file.status === 'uploading' && file.progress !== undefined && (
-                                <span className="text-xs text-primary">
-                                  {Math.round(file.progress)}%
-                                </span>
-                              )}
-                              {file.status === 'uploading' && file.progress === undefined && (
-                                <span className="text-xs text-primary">Uploading...</span>
-                              )}
-                              {file.status === 'success' && (
-                                <span className="text-xs text-green-600">Uploaded</span>
-                              )}
-                              {file.status === 'error' && file.error && (
-                                <span className="text-xs text-destructive truncate">
-                                  {file.error}
-                                </span>
-                              )}
-                            </div>
-                            {file.status === 'uploading' && file.progress !== undefined && (
-                              <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden">
-                                <div
-                                  className="h-full bg-primary transition-all duration-300 ease-out"
-                                  style={{ width: `${file.progress}%` }}
-                                />
-                              </div>
-                            )}
-                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {formatFileSize(file.size)}
+                          </p>
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeFile(file.id)}
-                        disabled={uploading || file.status === 'uploading'}
                         className="shrink-0"
                       >
                         <X className="h-4 w-4" />
@@ -418,10 +272,9 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    + Add more files ({MAX_FILES - uploadableFilesCount} remaining)
+                    + Add more files ({MAX_FILES - selectedFiles.length} remaining)
                   </button>
                 )}
                 {!canAddMoreFiles && (
@@ -457,14 +310,11 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
             type="button"
             variant="outline"
             onClick={handleClose}
-            disabled={uploading}
           >
-            {"Cancel"}
+            Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!hasPendingFiles || uploading}>
-            {uploading
-              ? `Uploading ${uploadingFiles.length} file${uploadingFiles.length !== 1 ? 's' : ''}...`
-              : `Upload ${pendingFiles.length} file${pendingFiles.length !== 1 ? 's' : ''}`}
+          <Button onClick={handleSubmit} disabled={!hasFiles}>
+            Upload {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''}
           </Button>
         </DialogFooter>
       </DialogContent>
