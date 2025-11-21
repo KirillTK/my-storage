@@ -10,6 +10,7 @@ import { Popover, PopoverAnchor } from '@/_shared/components/ui/popover';
 import { deleteDocument, downloadDocument, restoreDocument } from '~/server/actions/document.actions';
 import { formatDate, formatFileSize } from '@/_shared/lib/formatters.utils';
 import { getFileExtension, getFileNameWithoutExtension } from '~/app/_shared/lib/file.utils';
+import Image from 'next/image';
 
 interface DocumentViewerProps {
   document: DocumentModel;
@@ -77,6 +78,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 <FileText className="h-6 w-6 text-primary" />
               </div>
               <DocumentActionsMenu
+                document={document}
                 onRename={handleDocumentRename}
                 onDelete={handleDocumentDelete}
               />

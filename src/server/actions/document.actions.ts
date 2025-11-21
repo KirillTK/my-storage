@@ -15,6 +15,9 @@ async function putDocumentInBucket(
   const blob = await put(blobPathname, file, {
     access: "public",
     addRandomSuffix: false,
+    onUploadProgress: (progress) => {
+      console.log(progress, 'PROGRESS');
+    },
   });
   return blob;
 }
@@ -135,7 +138,10 @@ export const downloadDocument = async (documentId: string) => {
     throw new Error("Document not found");
   }
 
-  return getDownloadUrl(document.blobUrl);
+
+  console.log(await getDownloadUrl(document.blobUrl));
+
+  return await getDownloadUrl(document.blobUrl);
 };
 
 export const getDocumentNamesByFolderId = async (folderId: string | null) => {
