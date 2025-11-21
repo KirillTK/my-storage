@@ -61,8 +61,6 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         },
       });
 
-      console.log(newBlob, "newBlob");
-
       await createDocumentFromBlob(newBlob, file.name, file.size, file.type, folderId ?? null);
 
       toast.success('Upload complete', {
@@ -73,6 +71,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
 
       router.refresh();
       return true;
+      
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Upload failed', {

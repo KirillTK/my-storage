@@ -19,7 +19,7 @@ export async function uploadDocumentToBlob(
   const timestamp = Date.now();
   const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
   const blobPathname = `documents/${userId}/${timestamp}-${sanitizedFileName}`;
-  
+
   const blob = await put(blobPathname, file, {
     access: "public",
     addRandomSuffix: false,
@@ -33,7 +33,7 @@ export async function uploadDocumentToBlob(
       }
     },
   });
-  
+
   return blob;
 }
 
@@ -50,7 +50,7 @@ export async function createDocumentFromBlob(
   if (!userId) {
     throw new Error("Unauthorized");
   }
-  
+
   // Save metadata to database
   const [newDocument] = await db
     .insert(documents)
