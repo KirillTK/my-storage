@@ -1,6 +1,6 @@
-import { LandingHeader } from './_widgets/landing-header/ui';
-import { LandingFooter } from './_widgets/landing-footer/ui';
-import { HeroSection } from './_widgets/hero-section/ui/hero-section';
+import { LandingHeader } from '../widgets/landing-header/ui';
+import { LandingFooter } from '../widgets/landing-footer/ui';
+import { HeroSection } from '../widgets/hero-section/ui/hero-section';
 
 export default async function HomePage() {
   return (

@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Toaster } from "@/_shared/components/ui/sonner";
+import { Toaster } from "~/shared/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
