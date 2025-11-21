@@ -21,8 +21,11 @@ import Image from "next/image";
 import {
   COLOR_FILE_TYPE_MAP,
   ICON_FILE_TYPE_MAP,
-} from "../const/icon-map-by-type.const";
+} from "~/entities/document/const/icon-map-by-type.const";
 import { cn } from "~/shared/lib/utils";
+import { FileBadge } from '~/entities/document/components/file-badge/ui';
+import { IMAGE_FORMATS } from '~/entities/document/const/image-format.const';
+import { ImageBadge } from '~/entities/document/components/image-badge/ui';
 
 interface DocumentViewerProps {
   document: DocumentModel;
@@ -74,55 +77,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const fileExtension = getFileExtension(document.name);
   const fileNameWithoutExtension = getFileNameWithoutExtension(document.name);
 
-  // Map file extensions to icons/components
-  const getFileIcon = () => {
-    const ext = fileExtension?.toLowerCase() ?? "";
-
-    // Image extensions
-    const imageExtensions = [
-      "jpg",
-      "jpeg",
-      "png",
-      "gif",
-      "webp",
-      "svg",
-      "bmp",
-      "ico",
-      "tiff",
-      "tif",
-    ];
-    if (imageExtensions.includes(ext)) {
-      return (
-        <div className="bg-primary/15 border-border relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border">
-          <Image
-            src={document.blobUrl}
-            alt={document.name}
-            width={48}
-            height={48}
-            quality={60}
-            loading="lazy"
-          />
-        </div>
-      );
-    }
-
-    const IconComponent = ICON_FILE_TYPE_MAP.get(ext) ?? File;
-    const colors = COLOR_FILE_TYPE_MAP.get(ext) ?? {
-      bg: "bg-primary/15",
-      icon: "text-primary",
-    };
-
-    return (
-      <div
-        className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-lg",
-          colors.bg,
-        )}
-      >
-        <IconComponent className={`h-6 w-6 ${colors.icon}`} />
-      </div>
-    );
-  };
+  const isImage = IMAGE_FORMATS.includes(fileExtension ?? "");
 
   return (
     <>
@@ -140,7 +95,11 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           </PopoverAnchor>
           <div onClick={handleDocumentClick} className="p-4">
             <div className="mb-3 flex items-start justify-between">
-              {getFileIcon()}
+              <div className="flex items-center gap-2">
+                {isImage ? <ImageBadge document={document} /> : null}
+                <FileBadge fileType={fileExtension ?? ""} />
+              </div>
+
               <DocumentActionsMenu
                 document={document}
                 onPreview={() => setIsPreviewOpen(true)}

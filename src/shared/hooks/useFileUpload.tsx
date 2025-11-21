@@ -33,8 +33,6 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         onUploadProgress: (progress) => {
           const percentage = (progress.loaded / progress.total) * 100;
 
-          console.log(progress, "progress");
-
           toast.loading(
             <div className="w-full">
               <div className="mb-2 flex items-center justify-between">
