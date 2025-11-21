@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { FileText } from 'lucide-react';
+import {
+  File,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { DocumentModel } from '~/server/db/schema';
@@ -11,6 +13,7 @@ import { deleteDocument, downloadDocument, restoreDocument } from '~/server/acti
 import { formatDate, formatFileSize } from '@/_shared/lib/formatters.utils';
 import { getFileExtension, getFileNameWithoutExtension } from '~/app/_shared/lib/file.utils';
 import Image from 'next/image';
+import { COLOR_FILE_TYPE_MAP, ICON_FILE_TYPE_MAP } from '../const/icon-map-by-type.const';
 
 interface DocumentViewerProps {
   document: DocumentModel;
@@ -62,6 +65,39 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const fileExtension = getFileExtension(document.name);
   const fileNameWithoutExtension = getFileNameWithoutExtension(document.name);
 
+  // Map file extensions to icons/components
+  const getFileIcon = () => {
+    const ext = fileExtension?.toLowerCase() ?? '';
+
+    // Image extensions
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'tiff', 'tif'];
+    if (imageExtensions.includes(ext)) {
+      return (
+        <div className="relative flex h-12 w-12 items-center justify-center rounded-lg overflow-hidden bg-primary/15 border border-border">
+          <Image
+            src={document.blobUrl}
+            alt={document.name}
+            width={48}
+            height={48}
+            quality={60}
+            loading="lazy"
+          />
+        </div>
+      );
+    }
+
+
+
+    const IconComponent = ICON_FILE_TYPE_MAP.get(ext) || File;
+    const colors = COLOR_FILE_TYPE_MAP.get(ext) || { bg: 'bg-primary/15', icon: 'text-primary' };
+
+    return (
+      <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${colors.bg}`}>
+        <IconComponent className={`h-6 w-6 ${colors.icon}`} />
+      </div>
+    );
+  };
+
   return (
     <>
       <Popover open={isRenamePopoverOpen} onOpenChange={setIsRenamePopoverOpen} modal={true}>
@@ -74,9 +110,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           </PopoverAnchor>
           <div onClick={() => handleDocumentClick(document)} className="p-4">
             <div className="flex items-start justify-between mb-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15">
-                <FileText className="h-6 w-6 text-primary" />
-              </div>
+              {getFileIcon()}
               <DocumentActionsMenu
                 document={document}
                 onRename={handleDocumentRename}
