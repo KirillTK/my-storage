@@ -2,15 +2,17 @@
 
 import { useState, useRef, type DragEvent, type ReactNode } from "react"
 import { Upload } from "lucide-react"
+import { useFileUpload } from "~/app/_shared/hooks/useFileUpload"
 
 interface DragDropZoneProps {
-  onFileDrop: (files: File[]) => Promise<void>
+  folderId?: string | null
   children: ReactNode
 }
 
-export function DragDropZone({ onFileDrop, children }: DragDropZoneProps) {
+export function DragDropZone({ folderId, children }: DragDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const dragCounter = useRef(0)
+  const { uploadFiles } = useFileUpload({ folderId })
 
   const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -45,8 +47,8 @@ export function DragDropZone({ onFileDrop, children }: DragDropZoneProps) {
 
     const files = Array.from(e.dataTransfer.files)
 
-    if (!!files.length) {
-      await onFileDrop(files)
+    if (files.length > 0) {
+      await uploadFiles(files)
     }
   }
 
@@ -68,7 +70,7 @@ export function DragDropZone({ onFileDrop, children }: DragDropZoneProps) {
                 <Upload className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center">
-                <p className="text-xl font-semibold text-foreground mb-1">{"Drop your PDF here"}</p>
+                <p className="text-xl font-semibold text-foreground mb-1">{"Drop files here"}</p>
                 <p className="text-sm text-muted-foreground">{"Release to upload to the current folder"}</p>
               </div>
             </div>

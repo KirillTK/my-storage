@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { formatBytes } from '../lib/formatters.utils';
 
 interface UseFileUploadOptions {
-  folderId: string | null;
+  folderId?: string | null;
   onUploadComplete?: () => void;
 }
 
@@ -27,7 +27,7 @@ interface UploadSuccessData {
 
 type UploadStreamData = UploadProgressData | UploadErrorData | UploadSuccessData;
 
-export function useFileUpload(options: UseFileUploadOptions) {
+export function useFileUpload(options: UseFileUploadOptions = {}) {
   const { folderId, onUploadComplete } = options;
   const router = useRouter();
 
@@ -132,6 +132,7 @@ export function useFileUpload(options: UseFileUploadOptions) {
                   description: file.name,
                   duration: 2000,
                 });
+                router.refresh();
               }
             } catch (e) {
               console.error('Failed to parse stream data:', e);

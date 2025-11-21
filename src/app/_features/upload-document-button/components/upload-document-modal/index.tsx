@@ -14,6 +14,7 @@ import {
 } from "~/app/_shared/components/ui/dialog"
 import { Button } from "~/app/_shared/components/ui/button"
 import { formatFileSize } from '~/app/_shared/lib/formatters.utils'
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB, MAX_FILES_PER_UPLOAD } from '~/app/_shared/lib/constants'
 
 interface UploadDocumentModalProps {
   open: boolean
@@ -35,9 +36,6 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
   const dragCounter = useRef(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-  const MAX_FILES = 10
-
   const validateFiles = (files: File[]): { valid: File[]; errors: string[] } => {
     const valid: File[] = []
     const errors: string[] = []
@@ -45,7 +43,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
     files.forEach((file) => {
       if (file.size > MAX_FILE_SIZE) {
         const sizeMB = (file.size / (1024 * 1024)).toFixed(2)
-        errors.push(`${file.name}: File size (${sizeMB}MB) exceeds the maximum limit of 5MB.`)
+        errors.push(`${file.name}: File size (${sizeMB}MB) exceeds the maximum limit of ${MAX_FILE_SIZE_MB}MB.`)
       } else {
         valid.push(file)
       }
@@ -62,13 +60,13 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
     const totalFiles = currentFileCount + newFilesCount
 
     let filesToProcess = files
-    if (totalFiles > MAX_FILES) {
-      const remainingSlots = MAX_FILES - currentFileCount
+    if (totalFiles > MAX_FILES_PER_UPLOAD) {
+      const remainingSlots = MAX_FILES_PER_UPLOAD - currentFileCount
       if (remainingSlots <= 0) {
-        setError(`Maximum file limit reached. You can upload up to ${MAX_FILES} files at once.`)
+        setError(`Maximum file limit reached. You can upload up to ${MAX_FILES_PER_UPLOAD} files at once.`)
         return
       } else {
-        setError(`You can only add ${remainingSlots} more file${remainingSlots !== 1 ? 's' : ''}. Maximum limit is ${MAX_FILES} files.`)
+        setError(`You can only add ${remainingSlots} more file${remainingSlots !== 1 ? 's' : ''}. Maximum limit is ${MAX_FILES_PER_UPLOAD} files.`)
         filesToProcess = files.slice(0, remainingSlots)
       }
     }
@@ -169,7 +167,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
   }
 
   const hasFiles = selectedFiles.length > 0
-  const canAddMoreFiles = selectedFiles.length < MAX_FILES
+  const canAddMoreFiles = selectedFiles.length < MAX_FILES_PER_UPLOAD
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -182,7 +180,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
             <DialogTitle>{"Upload Files"}</DialogTitle>
           </div>
           <DialogDescription>
-            {`Select files to upload or drag and drop them here. Maximum ${MAX_FILES} files, 5MB per file. All file types are supported.`}
+            {`Select files to upload or drag and drop them here. Maximum ${MAX_FILES_PER_UPLOAD} files, ${MAX_FILE_SIZE_MB}MB per file. All file types are supported.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -232,7 +230,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                     {isDragging ? "Drop files here" : "Click to select files or drag and drop"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {`Maximum ${MAX_FILES} files • 5MB per file • All file types supported`}
+                    {`Maximum ${MAX_FILES_PER_UPLOAD} files • ${MAX_FILE_SIZE_MB}MB per file • All file types supported`}
                   </p>
                 </div>
               </button>
@@ -274,12 +272,12 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    + Add more files ({MAX_FILES - selectedFiles.length} remaining)
+                    + Add more files ({MAX_FILES_PER_UPLOAD - selectedFiles.length} remaining)
                   </button>
                 )}
                 {!canAddMoreFiles && (
                   <p className="text-xs text-muted-foreground text-center">
-                    Maximum file limit reached ({MAX_FILES} files)
+                    Maximum file limit reached ({MAX_FILES_PER_UPLOAD} files)
                   </p>
                 )}
               </div>

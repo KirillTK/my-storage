@@ -5,8 +5,7 @@ import {
   type UploadProgress,
 } from "~/server/actions/document.actions";
 import { auth } from "~/server/auth";
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "~/app/_shared/lib/constants";
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +34,7 @@ export async function POST(request: Request) {
     if (file.size > MAX_FILE_SIZE) {
       const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
       return NextResponse.json(
-        { error: `File size (${sizeMB}MB) exceeds the maximum limit of 5MB.` },
+        { error: `File size (${sizeMB}MB) exceeds the maximum limit of ${MAX_FILE_SIZE_MB}MB.` },
         { status: 400 },
       );
     }
