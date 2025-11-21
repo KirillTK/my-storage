@@ -52,7 +52,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
       if (!response.ok) {
         // Try to parse error from response
         try {
-          const errorData = await response.json();
+          const errorData = await response.json() as { error?: string };
           toast.error('Upload failed', {
             id: toastId,
             description: errorData.error ?? 'Failed to upload file. Please try again.',
@@ -88,7 +88,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        buffer = lines.pop() ?? '';
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {

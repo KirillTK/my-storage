@@ -15,6 +15,7 @@ import { formatDate, formatFileSize } from '@/_shared/lib/formatters.utils';
 import { getFileExtension, getFileNameWithoutExtension } from '~/app/_shared/lib/file.utils';
 import Image from 'next/image';
 import { COLOR_FILE_TYPE_MAP, ICON_FILE_TYPE_MAP } from '../const/icon-map-by-type.const';
+import { cn } from '~/app/_shared/lib/utils';
 
 interface DocumentViewerProps {
   document: DocumentModel;
@@ -88,13 +89,11 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
       );
     }
 
-
-
-    const IconComponent = ICON_FILE_TYPE_MAP.get(ext) || File;
-    const colors = COLOR_FILE_TYPE_MAP.get(ext) || { bg: 'bg-primary/15', icon: 'text-primary' };
+    const IconComponent = ICON_FILE_TYPE_MAP.get(ext) ?? File;
+    const colors = COLOR_FILE_TYPE_MAP.get(ext) ?? { bg: 'bg-primary/15', icon: 'text-primary' };
 
     return (
-      <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${colors.bg}`}>
+      <div className={cn('flex h-12 w-12 items-center justify-center rounded-lg', colors.bg)}>
         <IconComponent className={`h-6 w-6 ${colors.icon}`} />
       </div>
     );

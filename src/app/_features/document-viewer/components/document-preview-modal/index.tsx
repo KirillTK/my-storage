@@ -31,11 +31,13 @@ export function DocumentPreviewModal({
       setIsLoading(true);
       setHasError(false);
     }
-  }, [document?.id, isOpen]);
+  }, [document, isOpen, setIsLoading, setHasError]);
 
   if (!document) return null;
 
   const fileTypeInfo = detectFileType(document.name, document.mimeType);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { textContent, isLoading: isTextLoading, hasError: hasTextError } = useTextContent(
     fileTypeInfo.type === 'text' ? document.blobUrl : null,
     isOpen
@@ -121,7 +123,7 @@ export function DocumentPreviewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="max-w-4xl w-[90vw] max-h-[85vh] p-0 flex flex-col"
         showCloseButton={true}
       >

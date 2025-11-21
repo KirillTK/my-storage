@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
 import { documents } from '~/server/db/schema';
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     headers: {
       'Content-Type': 'application/octet-stream', // Force download instead of opening
       'Content-Disposition': `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`,
-      'Content-Length': blobResponse.headers.get('content-length') || '',
+      'Content-Length': blobResponse.headers.get('content-length') ?? '',
       'Cache-Control': 'no-cache',
       'X-Content-Type-Options': 'nosniff', // Prevent MIME type sniffing
     },
