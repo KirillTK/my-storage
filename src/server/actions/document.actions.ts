@@ -43,8 +43,14 @@ export async function createDocumentFromBlob(
   fileSize: number,
   mimeType: string,
   folderId: string | null,
-  userId: string,
 ) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+  
   // Save metadata to database
   const [newDocument] = await db
     .insert(documents)
