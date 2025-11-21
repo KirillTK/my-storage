@@ -15,10 +15,19 @@ import {
 import { Button } from "~/app/_shared/components/ui/button"
 import { formatFileSize } from '~/app/_shared/lib/formatters.utils'
 
+type UploadProgress = {
+  percentage: number;
+  loaded: number;
+  total: number;
+};
+
 interface UploadDocumentModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (file: File) => Promise<{ success: boolean; error?: string }>
+  onConfirm: (
+    file: File,
+    onProgress?: (progress: UploadProgress) => void,
+  ) => Promise<{ success: boolean; error?: string }>
 }
 
 interface FileWithStatus {
@@ -28,6 +37,7 @@ interface FileWithStatus {
   size: number
   status?: 'pending' | 'uploading' | 'success' | 'error'
   error?: string
+  progress?: number
 }
 
 export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDocumentModalProps) {
@@ -175,7 +185,19 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
     // Upload files sequentially
     for (const fileWithStatus of pendingFiles) {
       try {
-        const result = await onConfirm(fileWithStatus.file)
+        const result = await onConfirm(fileWithStatus.file, (progress) => {
+          // Update progress for this file
+          setSelectedFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileWithStatus.id
+                ? {
+                  ...f,
+                  progress: progress.percentage,
+                }
+                : f
+            )
+          )
+        })
 
         setSelectedFiles((prev) =>
           prev.map((f) =>
@@ -184,6 +206,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                 ...f,
                 status: result.success ? ('success' as const) : ('error' as const),
                 error: result.error,
+                progress: result.success ? 100 : undefined,
               }
               : f
           )
@@ -203,6 +226,7 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                 ...f,
                 status: 'error' as const,
                 error: 'An unexpected error occurred. Please try again.',
+                progress: undefined,
               }
               : f
           )
@@ -345,20 +369,35 @@ export function UploadDocumentModal({ open, onOpenChange, onConfirm }: UploadDoc
                           <p className="text-sm font-medium text-foreground truncate">
                             {file.name}
                           </p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-xs text-muted-foreground">
-                              {formatFileSize(file.size)}
-                            </p>
-                            {file.status === 'uploading' && (
-                              <span className="text-xs text-primary">Uploading...</span>
-                            )}
-                            {file.status === 'success' && (
-                              <span className="text-xs text-green-600">Uploaded</span>
-                            )}
-                            {file.status === 'error' && file.error && (
-                              <span className="text-xs text-destructive truncate">
-                                {file.error}
-                              </span>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs text-muted-foreground">
+                                {formatFileSize(file.size)}
+                              </p>
+                              {file.status === 'uploading' && file.progress !== undefined && (
+                                <span className="text-xs text-primary">
+                                  {Math.round(file.progress)}%
+                                </span>
+                              )}
+                              {file.status === 'uploading' && file.progress === undefined && (
+                                <span className="text-xs text-primary">Uploading...</span>
+                              )}
+                              {file.status === 'success' && (
+                                <span className="text-xs text-green-600">Uploaded</span>
+                              )}
+                              {file.status === 'error' && file.error && (
+                                <span className="text-xs text-destructive truncate">
+                                  {file.error}
+                                </span>
+                              )}
+                            </div>
+                            {file.status === 'uploading' && file.progress !== undefined && (
+                              <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden">
+                                <div
+                                  className="h-full bg-primary transition-all duration-300 ease-out"
+                                  style={{ width: `${file.progress}%` }}
+                                />
+                              </div>
                             )}
                           </div>
                         </div>

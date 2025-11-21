@@ -3,7 +3,6 @@
 import { toast } from 'sonner';
 import { DragDropZone } from '@/_shared/components/ui/drag-drop-zone';
 import { validateUniqueFileNames } from '~/server/actions/validation.actions';
-import { createDocument } from '~/server/actions/document.actions';
 import { useRouter } from 'next/navigation';
 
 interface FileDropHandlerProps {
@@ -23,11 +22,11 @@ export function FileDropHandler({ folderId, children }: FileDropHandlerProps) {
         return;
       }
 
-      const promises = files.map((file) => createDocument(file, folderId));
+      // const promises = files.map((file) => createDocument(file, folderId));
 
-      console.log(promises);
+      // console.log(promises);
 
-      await Promise.allSettled(promises);
+      // await Promise.allSettled(promises);
 
       router.refresh();
     } catch (error) {

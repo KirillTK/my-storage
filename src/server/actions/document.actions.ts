@@ -5,50 +5,64 @@ import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema";
 
-async function putDocumentInBucket(
+export type UploadProgress = {
+  percentage: number;
+  loaded: number;
+  total: number;
+};
+
+export async function uploadDocumentToBlob(
   file: File,
   userId: string,
+  onProgress?: (progress: UploadProgress) => void,
 ): Promise<PutBlobResult> {
   const timestamp = Date.now();
   const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
   const blobPathname = `documents/${userId}/${timestamp}-${sanitizedFileName}`;
+  
   const blob = await put(blobPathname, file, {
     access: "public",
     addRandomSuffix: false,
     onUploadProgress: (progress) => {
-      console.log(progress, 'PROGRESS');
+      if (onProgress) {
+        onProgress({
+          percentage: progress.percentage,
+          loaded: progress.loaded,
+          total: progress.total,
+        });
+      }
     },
   });
+  
   return blob;
 }
 
-export const createDocument = async (file: File, folderId: string | null) => {
-  const session = await auth();
-
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const blob = await putDocumentInBucket(file, session.user.id);
-
+export async function createDocumentFromBlob(
+  blob: PutBlobResult,
+  fileName: string,
+  fileSize: number,
+  mimeType: string,
+  folderId: string | null,
+  userId: string,
+) {
   // Save metadata to database
   const [newDocument] = await db
     .insert(documents)
     .values({
-      name: file.name,
+      name: fileName,
       folderId: folderId ?? null,
-      uploadedById: session.user.id,
+      uploadedById: userId,
       blobUrl: blob.url,
       blobPathname: blob.pathname,
-      fileSize: file.size,
-      mimeType: file.type,
+      fileSize: fileSize,
+      mimeType: mimeType,
       version: 1,
       previousVersionId: null,
     })
     .returning();
 
   return newDocument;
-};
+}
 
 export const restoreDocument = async (documentId: string) => {
   const session = await auth();
@@ -138,7 +152,6 @@ export const downloadDocument = async (documentId: string) => {
     throw new Error("Document not found");
   }
 
-
   console.log(await getDownloadUrl(document.blobUrl));
 
   return await getDownloadUrl(document.blobUrl);
@@ -157,7 +170,9 @@ export const getDocumentNamesByFolderId = async (folderId: string | null) => {
     .where(
       and(
         eq(documents.uploadedById, session.user.id),
-        folderId ? eq(documents.folderId, folderId) : isNull(documents.folderId),
+        folderId
+          ? eq(documents.folderId, folderId)
+          : isNull(documents.folderId),
       ),
     );
 };
