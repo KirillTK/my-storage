@@ -1,8 +1,13 @@
-'use client';
-import { useState } from 'react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '~/shared/components/ui/dropdown-menu';
-import { Button } from '~/shared/components/ui/button';
-import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+"use client";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "~/shared/components/ui/dropdown-menu";
+import { Button } from "~/shared/components/ui/button";
+import { Edit2, MoreVertical, Trash2 } from "lucide-react";
 
 interface FolderActionsMenuProps {
   onRename: () => void;
@@ -33,11 +38,7 @@ export function FolderActionsMenu({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-        >
+        <Button variant="ghost" size="icon" className="h-8 w-8">
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -54,4 +55,3 @@ export function FolderActionsMenu({
     </DropdownMenu>
   );
 }
-

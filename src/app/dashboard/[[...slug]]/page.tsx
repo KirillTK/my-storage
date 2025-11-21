@@ -1,9 +1,9 @@
-import { StorageGrid } from '~/widgets/storage-grid/ui';
-import { FolderBreadcrumbs } from '~/features/folder-breadcrumbs/ui';
-import { extractLastUuid } from '~/shared/lib/uuid.utils';
-import { getStorageData } from '~/server/actions/dashboard.actions';
-import { getFolderPath } from '~/server/actions/folder.actions';
-import { DragDropZone } from '~/shared/components/ui/drag-drop-zone';
+import { StorageGrid } from "~/widgets/storage-grid/ui";
+import { FolderBreadcrumbs } from "~/features/folder-breadcrumbs/ui";
+import { extractLastUuid } from "~/shared/lib/uuid.utils";
+import { getStorageData } from "~/server/actions/dashboard.actions";
+import { getFolderPath } from "~/server/actions/folder.actions";
+import { DragDropZone } from "~/shared/components/ui/drag-drop-zone";
 
 export default async function DashboardPage({
   params,
@@ -17,7 +17,7 @@ export default async function DashboardPage({
   const folderPath = await getFolderPath(folderId);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <FolderBreadcrumbs folderPath={folderPath} />
       <DragDropZone folderId={folderId}>
         <div className="flex-1 overflow-auto">
@@ -27,6 +27,5 @@ export default async function DashboardPage({
         </div>
       </DragDropZone>
     </div>
-  )
+  );
 }
-

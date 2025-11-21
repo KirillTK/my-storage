@@ -1,4 +1,4 @@
-import { ErrorMessage } from './error-message';
+import { ErrorMessage } from "./error-message";
 
 export function UnsupportedPreview() {
   return (
@@ -8,4 +8,3 @@ export function UnsupportedPreview() {
     />
   );
 }
-

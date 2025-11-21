@@ -55,14 +55,16 @@ export const documentsRelations = relations(documents, ({ one, many }) => ({
 }));
 
 // Document permissions relations
-export const documentPermissionsRelations = relations(documentPermissions, ({ one }) => ({
-  document: one(documents, {
-    fields: [documentPermissions.documentId],
-    references: [documents.id],
+export const documentPermissionsRelations = relations(
+  documentPermissions,
+  ({ one }) => ({
+    document: one(documents, {
+      fields: [documentPermissions.documentId],
+      references: [documents.id],
+    }),
+    user: one(users, {
+      fields: [documentPermissions.userId],
+      references: [users.id],
+    }),
   }),
-  user: one(users, {
-    fields: [documentPermissions.userId],
-    references: [users.id],
-  }),
-}));
-
+);

@@ -1,5 +1,5 @@
-import { LoadingSpinner } from './loading-spinner';
-import { ErrorMessage } from './error-message';
+import { LoadingSpinner } from "./loading-spinner";
+import { ErrorMessage } from "./error-message";
 
 interface AudioPreviewProps {
   src: string;
@@ -23,7 +23,7 @@ export function AudioPreview({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-[60vh] bg-muted/50">
+    <div className="bg-muted/50 flex h-[60vh] flex-col items-center justify-center">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />
@@ -46,4 +46,3 @@ export function AudioPreview({
     </div>
   );
 }
-

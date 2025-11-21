@@ -103,7 +103,9 @@ export const getFolderPath = async (folderId: string | null) => {
   let currentFolderId: string | null = folderId;
 
   while (currentFolderId) {
-    const folder: { id: string; name: string; parentFolderId: string | null } | undefined = await db.query.folders.findFirst({
+    const folder:
+      | { id: string; name: string; parentFolderId: string | null }
+      | undefined = await db.query.folders.findFirst({
       where: and(
         eq(folders.id, currentFolderId),
         eq(folders.ownerId, session.user.id),

@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import { LoadingSpinner } from './loading-spinner';
-import { ErrorMessage } from './error-message';
+import Image from "next/image";
+import { LoadingSpinner } from "./loading-spinner";
+import { ErrorMessage } from "./error-message";
 
 interface ImagePreviewProps {
   src: string;
@@ -24,7 +24,7 @@ export function ImagePreview({
   }
 
   return (
-    <div className="relative w-full h-[60vh] flex items-center justify-center bg-muted/50">
+    <div className="bg-muted/50 relative flex h-[60vh] w-full items-center justify-center">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />
@@ -42,4 +42,3 @@ export function ImagePreview({
     </div>
   );
 }
-

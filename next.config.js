@@ -7,7 +7,9 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    remotePatterns: [new URL("https://1ah1kumobx6ra1t9.public.blob.vercel-storage.com/**")],
+    remotePatterns: [
+      new URL("https://1ah1kumobx6ra1t9.public.blob.vercel-storage.com/**"),
+    ],
   },
 };
 

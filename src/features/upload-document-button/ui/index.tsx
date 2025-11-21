@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Upload } from 'lucide-react';
-import { Button } from '~/shared/components/ui/button';
-import { UploadDocumentModal } from '../components/upload-document-modal';
-import { useState } from 'react';
-import { useUrlFolder } from '~/shared/hooks/useUrlFolder';
-import { useFileUpload } from '~/shared/hooks/useFileUpload';
+import { Upload } from "lucide-react";
+import { Button } from "~/shared/components/ui/button";
+import { UploadDocumentModal } from "../components/upload-document-modal";
+import { useState } from "react";
+import { useUrlFolder } from "~/shared/hooks/useUrlFolder";
+import { useFileUpload } from "~/shared/hooks/useFileUpload";
 
 export function UploadDocumentButton() {
   const [open, setOpen] = useState(false);
@@ -23,10 +23,10 @@ export function UploadDocumentButton() {
         <Upload className="h-4 w-4" />
         Upload
       </Button>
-      <UploadDocumentModal 
-        open={open} 
-        onOpenChange={setOpen} 
-        onConfirm={handleUploadDocuments} 
+      <UploadDocumentModal
+        open={open}
+        onOpenChange={setOpen}
+        onConfirm={handleUploadDocuments}
       />
     </>
   );

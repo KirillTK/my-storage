@@ -1,45 +1,56 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Folder } from "lucide-react"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/shared/components/ui/dialog'
-import { Button } from '~/shared/components/ui/button'
-import { Input } from '~/shared/components/ui/input'
-import { Label } from '~/shared/components/ui/label'
-
-
+import { useState } from "react";
+import { Folder } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/shared/components/ui/dialog";
+import { Button } from "~/shared/components/ui/button";
+import { Input } from "~/shared/components/ui/input";
+import { Label } from "~/shared/components/ui/label";
 
 interface CreateFolderDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onConfirm: (name: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: (name: string) => void;
 }
 
-export function CreateFolderDialog({ open, onOpenChange, onConfirm }: CreateFolderDialogProps) {
-  const [name, setName] = useState("")
+export function CreateFolderDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+}: CreateFolderDialogProps) {
+  const [name, setName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (name.trim()) {
-      onConfirm(name.trim())
-      setName("")
+      onConfirm(name.trim());
+      setName("");
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <Folder className="h-5 w-5 text-primary" />
+          <div className="mb-2 flex items-center gap-3">
+            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+              <Folder className="text-primary h-5 w-5" />
             </div>
             <DialogTitle>{"Create New Folder"}</DialogTitle>
           </div>
           <DialogDescription>
-            {"Enter a name for your new folder. Folder names must be unique within the current directory."}
+            {
+              "Enter a name for your new folder. Folder names must be unique within the current directory."
+            }
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -56,7 +67,11 @@ export function CreateFolderDialog({ open, onOpenChange, onConfirm }: CreateFold
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {"Cancel"}
             </Button>
             <Button type="submit" disabled={!name.trim()}>
@@ -66,5 +81,5 @@ export function CreateFolderDialog({ open, onOpenChange, onConfirm }: CreateFold
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

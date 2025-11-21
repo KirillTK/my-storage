@@ -1,5 +1,5 @@
-import { LoadingSpinner } from './loading-spinner';
-import { ErrorMessage } from './error-message';
+import { LoadingSpinner } from "./loading-spinner";
+import { ErrorMessage } from "./error-message";
 
 interface TextPreviewProps {
   content: string | null;
@@ -7,10 +7,14 @@ interface TextPreviewProps {
   hasError: boolean;
 }
 
-export function TextPreview({ content, isLoading, hasError }: TextPreviewProps) {
+export function TextPreview({
+  content,
+  isLoading,
+  hasError,
+}: TextPreviewProps) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[60vh] bg-muted/50">
+      <div className="bg-muted/50 flex h-[60vh] items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -21,11 +25,10 @@ export function TextPreview({ content, isLoading, hasError }: TextPreviewProps) 
   }
 
   return (
-    <div className="w-full h-[60vh] overflow-auto bg-muted/30 rounded-lg border">
-      <pre className="p-4 text-sm font-mono whitespace-pre-wrap wrap-break-word">
+    <div className="bg-muted/30 h-[60vh] w-full overflow-auto rounded-lg border">
+      <pre className="p-4 font-mono text-sm wrap-break-word whitespace-pre-wrap">
         {content}
       </pre>
     </div>
   );
 }
-

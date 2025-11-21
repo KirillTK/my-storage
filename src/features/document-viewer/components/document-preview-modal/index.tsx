@@ -1,15 +1,20 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/shared/components/ui/dialog';
-import type { DocumentModel } from '~/server/db/schema';
-import { detectFileType } from './utils/file-type.utils';
-import { ImagePreview } from './components/image-preview';
-import { PDFPreview } from './components/pdf-preview';
-import { VideoPreview } from './components/video-preview';
-import { AudioPreview } from './components/audio-preview';
-import { TextPreview } from './components/text-preview';
-import { UnsupportedPreview } from './components/unsupported-preview';
-import { useTextContent } from './hooks/use-text-content';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "~/shared/components/ui/dialog";
+import type { DocumentModel } from "~/server/db/schema";
+import { detectFileType } from "./utils/file-type.utils";
+import { ImagePreview } from "./components/image-preview";
+import { PDFPreview } from "./components/pdf-preview";
+import { VideoPreview } from "./components/video-preview";
+import { AudioPreview } from "./components/audio-preview";
+import { TextPreview } from "./components/text-preview";
+import { UnsupportedPreview } from "./components/unsupported-preview";
+import { useTextContent } from "./hooks/use-text-content";
 
 interface DocumentPreviewModalProps {
   document: DocumentModel | null;
@@ -38,9 +43,13 @@ export function DocumentPreviewModal({
   const fileTypeInfo = detectFileType(document.name, document.mimeType);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { textContent, isLoading: isTextLoading, hasError: hasTextError } = useTextContent(
-    fileTypeInfo.type === 'text' ? document.blobUrl : null,
-    isOpen
+  const {
+    textContent,
+    isLoading: isTextLoading,
+    hasError: hasTextError,
+  } = useTextContent(
+    fileTypeInfo.type === "text" ? document.blobUrl : null,
+    isOpen,
   );
 
   const handleLoad = () => {
@@ -55,7 +64,7 @@ export function DocumentPreviewModal({
 
   const previewMap = new Map<string, () => React.ReactNode>([
     [
-      'image',
+      "image",
       () => (
         <ImagePreview
           src={document.blobUrl}
@@ -68,7 +77,7 @@ export function DocumentPreviewModal({
       ),
     ],
     [
-      'pdf',
+      "pdf",
       () => (
         <PDFPreview
           src={document.blobUrl}
@@ -81,7 +90,7 @@ export function DocumentPreviewModal({
       ),
     ],
     [
-      'video',
+      "video",
       () => (
         <VideoPreview
           src={document.blobUrl}
@@ -93,7 +102,7 @@ export function DocumentPreviewModal({
       ),
     ],
     [
-      'audio',
+      "audio",
       () => (
         <AudioPreview
           src={document.blobUrl}
@@ -106,7 +115,7 @@ export function DocumentPreviewModal({
       ),
     ],
     [
-      'text',
+      "text",
       () => (
         <TextPreview
           content={textContent}
@@ -124,19 +133,16 @@ export function DocumentPreviewModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-4xl w-[90vw] max-h-[85vh] p-0 flex flex-col"
+        className="flex max-h-[85vh] w-[90vw] max-w-4xl flex-col p-0"
         showCloseButton={true}
       >
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <DialogTitle className="text-left truncate pr-8">
+        <DialogHeader className="border-b px-6 pt-6 pb-4">
+          <DialogTitle className="truncate pr-8 text-left">
             {document.name}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-auto p-6">
-          {renderPreview()}
-        </div>
+        <div className="flex-1 overflow-auto p-6">{renderPreview()}</div>
       </DialogContent>
     </Dialog>
   );
 }
-

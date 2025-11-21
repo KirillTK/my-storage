@@ -15,4 +15,3 @@ export const sessions = createTable(
   }),
   (t) => [index("t_user_id_idx").on(t.userId)],
 );
-

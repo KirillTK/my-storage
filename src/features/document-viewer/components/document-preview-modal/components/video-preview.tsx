@@ -1,5 +1,5 @@
-import { LoadingSpinner } from './loading-spinner';
-import { ErrorMessage } from './error-message';
+import { LoadingSpinner } from "./loading-spinner";
+import { ErrorMessage } from "./error-message";
 
 interface VideoPreviewProps {
   src: string;
@@ -21,7 +21,7 @@ export function VideoPreview({
   }
 
   return (
-    <div className="relative w-full h-[60vh] flex items-center justify-center bg-black">
+    <div className="relative flex h-[60vh] w-full items-center justify-center bg-black">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner className="text-white" />
@@ -30,7 +30,7 @@ export function VideoPreview({
       <video
         src={src}
         controls
-        className="max-w-full max-h-full"
+        className="max-h-full max-w-full"
         onLoadedData={onLoad}
         onError={onError}
       >
@@ -39,4 +39,3 @@ export function VideoPreview({
     </div>
   );
 }
-

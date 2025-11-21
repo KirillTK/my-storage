@@ -16,4 +16,3 @@ export const users = createTable("user", (d) => ({
     .$defaultFn(() => /* @__PURE__ */ new Date()),
   image: d.varchar({ length: 255 }),
 }));
-

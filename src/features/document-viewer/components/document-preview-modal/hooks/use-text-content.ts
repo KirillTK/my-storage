@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface UseTextContentResult {
   textContent: string | null;
@@ -6,7 +6,10 @@ interface UseTextContentResult {
   hasError: boolean;
 }
 
-export function useTextContent(blobUrl: string | null, isOpen: boolean): UseTextContentResult {
+export function useTextContent(
+  blobUrl: string | null,
+  isOpen: boolean,
+): UseTextContentResult {
   const [textContent, setTextContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -34,4 +37,3 @@ export function useTextContent(blobUrl: string | null, isOpen: boolean): UseText
 
   return { textContent, isLoading, hasError };
 }
-

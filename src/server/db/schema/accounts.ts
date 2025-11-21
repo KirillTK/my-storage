@@ -27,4 +27,3 @@ export const accounts = createTable(
     index("account_user_id_idx").on(t.userId),
   ],
 );
-

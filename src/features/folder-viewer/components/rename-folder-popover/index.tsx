@@ -1,11 +1,11 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import { PopoverContent } from '~/shared/components/ui/popover';
-import { Input } from '~/shared/components/ui/input';
-import { Button } from '~/shared/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { renameFolder } from '~/server/actions/folder.actions';
+"use client";
+import { useState, useEffect, useRef } from "react";
+import { PopoverContent } from "~/shared/components/ui/popover";
+import { Input } from "~/shared/components/ui/input";
+import { Button } from "~/shared/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { renameFolder } from "~/server/actions/folder.actions";
 
 interface RenameFolderPopoverProps {
   folderId: string;
@@ -49,7 +49,7 @@ export function RenameFolderPopover({
       onOpenChange(false);
       router.refresh();
     } catch (error) {
-      console.error('Failed to rename folder:', error);
+      console.error("Failed to rename folder:", error);
     } finally {
       setIsRenaming(false);
     }
@@ -62,14 +62,14 @@ export function RenameFolderPopover({
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     try {
-      if (e.key === 'Enter' && !isRenaming) {
+      if (e.key === "Enter" && !isRenaming) {
         await handleSave();
       }
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         handleCancel();
       }
     } catch (error) {
-      console.error('Failed to rename folder:', error);
+      console.error("Failed to rename folder:", error);
     } finally {
       setIsRenaming(false);
     }
@@ -87,7 +87,7 @@ export function RenameFolderPopover({
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <h4 className="font-medium text-sm">Rename Folder</h4>
+          <h4 className="text-sm font-medium">Rename Folder</h4>
           <Input
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
@@ -109,7 +109,11 @@ export function RenameFolderPopover({
           <Button
             size="sm"
             onClick={handleSave}
-            disabled={isRenaming || !newFolderName.trim() || newFolderName === currentName}
+            disabled={
+              isRenaming ||
+              !newFolderName.trim() ||
+              newFolderName === currentName
+            }
           >
             {isRenaming ? (
               <>
@@ -117,7 +121,7 @@ export function RenameFolderPopover({
                 Saving...
               </>
             ) : (
-              'Save'
+              "Save"
             )}
           </Button>
         </div>
@@ -125,4 +129,3 @@ export function RenameFolderPopover({
     </PopoverContent>
   );
 }
-

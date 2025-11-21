@@ -1,6 +1,6 @@
-'use client';
-import Link from 'next/link';
-import { Fragment } from 'react';
+"use client";
+import Link from "next/link";
+import { Fragment } from "react";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -8,7 +8,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '~/shared/components/ui/breadcrumb';
+} from "~/shared/components/ui/breadcrumb";
 
 interface BreadcrumbItem {
   id: string;
@@ -49,4 +49,3 @@ export function FolderBreadcrumbs({ folderPath }: FolderBreadcrumbsProps) {
     </Breadcrumb>
   );
 }
-

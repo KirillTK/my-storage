@@ -11,7 +11,7 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-        POSTGRES_URL: z.string().url(),
+    POSTGRES_URL: z.string().url(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     BLOB_READ_WRITE_TOKEN: z.string(),

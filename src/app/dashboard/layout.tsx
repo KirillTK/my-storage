@@ -1,12 +1,16 @@
-import { DashboardHeader } from '~/widgets/dashboard-header/ui';
+import { DashboardHeader } from "~/widgets/dashboard-header/ui";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <DashboardHeader />
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>
-  )
+  );
 }

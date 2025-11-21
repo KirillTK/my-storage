@@ -1,5 +1,5 @@
-import { LoadingSpinner } from './loading-spinner';
-import { ErrorMessage } from './error-message';
+import { LoadingSpinner } from "./loading-spinner";
+import { ErrorMessage } from "./error-message";
 
 interface PDFPreviewProps {
   src: string;
@@ -23,15 +23,15 @@ export function PDFPreview({
   }
 
   return (
-    <div className="relative w-full h-[60vh]">
+    <div className="relative h-[60vh] w-full">
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+        <div className="bg-muted/50 absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />
         </div>
       )}
       <iframe
         src={src}
-        className="w-full h-full border-0"
+        className="h-full w-full border-0"
         onLoad={onLoad}
         onError={onError}
         title={title}
@@ -39,4 +39,3 @@ export function PDFPreview({
     </div>
   );
 }
-

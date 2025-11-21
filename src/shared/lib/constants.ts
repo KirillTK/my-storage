@@ -10,4 +10,3 @@ export const MAX_FILE_SIZE_MB = 500;
 
 // Maximum number of files that can be uploaded at once
 export const MAX_FILES_PER_UPLOAD = 10;
-
