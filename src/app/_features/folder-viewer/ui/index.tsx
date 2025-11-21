@@ -71,20 +71,27 @@ export function FolderViewer({ folder }: FolderViewerProps) {
           </PopoverAnchor>
 
           <Link href={`/dashboard/${folder.id}`}>
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/15">
-                  <Folder className="h-6 w-6 text-accent" />
-                </div>
-                <FolderActionsMenu
-                  onRename={handleFolderRename}
-                  onDelete={handleFolderDelete}
-                />
+            <div className="flex items-center gap-3 flex-1 min-w-0 p-2">
+              <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Folder className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-medium text-foreground text-balance mb-1">{folder.name}</h3>
-              <p className="text-xs text-muted-foreground">
-                {totalItems} items
-              </p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-base text-foreground truncate leading-tight">{folder.name}</h3>
+                  <FolderActionsMenu
+                    onRename={handleFolderRename}
+                    onDelete={handleFolderDelete}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    {totalItems} items
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">{folder.updatedAt.toLocaleDateString()}</p>
+                </div>
+
+              </div>
             </div>
           </Link>
         </div>
@@ -95,7 +102,7 @@ export function FolderViewer({ folder }: FolderViewerProps) {
           isOpen={isRenamePopoverOpen}
           onOpenChange={setIsRenamePopoverOpen}
         />
-      </Popover>
+      </Popover >
     </>
   );
 }

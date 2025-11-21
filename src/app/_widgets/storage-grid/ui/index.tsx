@@ -20,19 +20,34 @@ export function StorageGrid({ folders, documents }: StorageGridProps) {
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">{"No items yet"}</h3>
           <p className="text-sm text-muted-foreground">
-            {"Create a folder, upload a PDF, or drag and drop files here"}
+            {"Create a folder, upload a files, or drag and drop files here"}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {folders.map((folder) => (
-            <FolderViewer key={folder.id} folder={folder} />
-          ))}
-          {documents.map((document) => (
-            <DocumentViewer key={document.id} document={document} />
-          ))}
-        </div>
-      )}
-    </div>
+        <>
+          {folders.length > 0 && (
+            <div className="mb-6">
+              <div className="mb-2 text-base font-medium text-muted-foreground">Folders</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {folders.map((folder) => (
+                  <FolderViewer key={folder.id} folder={folder} />
+                ))}
+              </div>
+            </div>
+          )}
+          {documents.length > 0 && (
+            <div>
+              <div className="mb-2 text-base font-medium text-muted-foreground">Documents</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {documents.map((document) => (
+                  <DocumentViewer key={document.id} document={document} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )
+      }
+    </div >
   )
 }

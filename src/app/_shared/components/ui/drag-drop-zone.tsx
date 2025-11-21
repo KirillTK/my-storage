@@ -4,7 +4,7 @@ import { useState, useRef, type DragEvent, type ReactNode } from "react"
 import { Upload } from "lucide-react"
 
 interface DragDropZoneProps {
-  onFileDrop: (file: File) => Promise<void>
+  onFileDrop: (files: File[]) => Promise<void>
   children: ReactNode
 }
 
@@ -44,10 +44,9 @@ export function DragDropZone({ onFileDrop, children }: DragDropZoneProps) {
     dragCounter.current = 0
 
     const files = Array.from(e.dataTransfer.files)
-    const pdfFile = files.find((file) => file.type === "application/pdf")
 
-    if (pdfFile) {
-      await onFileDrop(pdfFile)
+    if (!!files.length) {
+      await onFileDrop(files)
     }
   }
 

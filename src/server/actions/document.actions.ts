@@ -1,5 +1,5 @@
-'use server';
-import { put, type PutBlobResult } from "@vercel/blob";
+"use server";
+import { put, type PutBlobResult, getDownloadUrl } from "@vercel/blob";
 import { eq, isNull, and, asc, sql } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
@@ -117,4 +117,41 @@ export const getDocumentsByFolderId = async (folderId: string | null) => {
       ),
     )
     .orderBy(asc(documents.createdAt));
+};
+
+export const downloadDocument = async (documentId: string) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  const [document] = await db
+    .select()
+    .from(documents)
+    .where(eq(documents.id, documentId));
+
+  if (!document) {
+    throw new Error("Document not found");
+  }
+
+  return getDownloadUrl(document.blobUrl);
+};
+
+export const getDocumentNamesByFolderId = async (folderId: string | null) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  return await db
+    .select({ name: documents.name })
+    .from(documents)
+    .where(
+      and(
+        eq(documents.uploadedById, session.user.id),
+        folderId ? eq(documents.folderId, folderId) : isNull(documents.folderId),
+      ),
+    );
 };

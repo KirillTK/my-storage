@@ -7,7 +7,7 @@ import type { DocumentModel } from '~/server/db/schema';
 import { DocumentActionsMenu } from '../components/document-actions-menu';
 import { RenameDocumentPopover } from '../components/rename-document-popover';
 import { Popover, PopoverAnchor } from '@/_shared/components/ui/popover';
-import { deleteDocument, restoreDocument } from '~/server/actions/document.actions';
+import { deleteDocument, downloadDocument, restoreDocument } from '~/server/actions/document.actions';
 import { formatDate, formatFileSize } from '@/_shared/lib/formatters.utils';
 import { getFileExtension, getFileNameWithoutExtension } from '~/app/_shared/lib/file.utils';
 
