@@ -3,22 +3,30 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/_shared/components/ui/dropdown-menu';
 import { Button } from '@/_shared/components/ui/button';
-import { Download, Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import { Download, Edit2, Eye, MoreVertical, Trash2 } from 'lucide-react';
 import { downloadFileWithProgress, formatBytes } from '~/app/_shared/lib/file.utils';
 import type { DocumentModel } from '~/server/db/schema';
 
 interface DocumentActionsMenuProps {
   document: DocumentModel;
+  onPreview: () => void;
   onRename: () => void;
   onDelete: () => void;
 }
 
 export function DocumentActionsMenu({
   document,
+  onPreview,
   onRename,
   onDelete,
 }: DocumentActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handlePreview = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(false);
+    onPreview();
+  };
 
   const handleRename = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -98,12 +106,16 @@ export function DocumentActionsMenu({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="h-8 w-8"
         >
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={handlePreview}>
+          <Eye className="mr-2 h-4 w-4" />
+          Preview
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download

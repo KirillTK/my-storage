@@ -8,8 +8,9 @@ import { toast } from 'sonner';
 import type { DocumentModel } from '~/server/db/schema';
 import { DocumentActionsMenu } from '../components/document-actions-menu';
 import { RenameDocumentPopover } from '../components/rename-document-popover';
+import { DocumentPreviewModal } from '../components/document-preview-modal';
 import { Popover, PopoverAnchor } from '@/_shared/components/ui/popover';
-import { deleteDocument, downloadDocument, restoreDocument } from '~/server/actions/document.actions';
+import { deleteDocument, restoreDocument } from '~/server/actions/document.actions';
 import { formatDate, formatFileSize } from '@/_shared/lib/formatters.utils';
 import { getFileExtension, getFileNameWithoutExtension } from '~/app/_shared/lib/file.utils';
 import Image from 'next/image';
@@ -22,9 +23,10 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document }: DocumentViewerProps) {
   const router = useRouter();
   const [isRenamePopoverOpen, setIsRenamePopoverOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const handleDocumentClick = (document: DocumentModel) => {
-    console.log(document);
+  const handleDocumentClick = () => {
+    setIsPreviewOpen(true);
   };
 
   const handleDocumentRename = () => {
@@ -108,16 +110,17 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           <PopoverAnchor asChild>
             <div className="absolute inset-0 pointer-events-none" />
           </PopoverAnchor>
-          <div onClick={() => handleDocumentClick(document)} className="p-4">
+          <div onClick={handleDocumentClick} className="p-4">
             <div className="flex items-start justify-between mb-3">
               {getFileIcon()}
               <DocumentActionsMenu
                 document={document}
+                onPreview={() => setIsPreviewOpen(true)}
                 onRename={handleDocumentRename}
                 onDelete={handleDocumentDelete}
               />
             </div>
-            <h3 className="font-medium text-foreground text-balance mb-1 break-words">{document.name}</h3>
+            <h3 className="font-medium text-foreground text-balance mb-1 wrap-break-word">{document.name}</h3>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>{formatFileSize(document.fileSize)}</span>
               <span>{formatDate(document.createdAt)}</span>
@@ -133,6 +136,11 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           onOpenChange={setIsRenamePopoverOpen}
         />
       </Popover>
+      <DocumentPreviewModal
+        document={document}
+        isOpen={isPreviewOpen}
+        onOpenChange={setIsPreviewOpen}
+      />
     </>
   );
 }
