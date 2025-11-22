@@ -1,13 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Folder } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import type { FolderWithChildrenAndDocumentsModel } from "~/server/db/schema";
 import { FolderActionsMenu } from "../components/folder-actions-menu";
 import { RenameFolderPopover } from "../components/rename-folder-popover";
 import { Popover, PopoverAnchor } from "~/shared/components/ui/popover";
-import { deleteFolder, restoreFolder } from "~/server/actions/folder.actions";
+import { useFolder } from "~/entities/folder/hooks/use-folder";
 import Link from "next/link";
 
 interface FolderViewerProps {
@@ -15,47 +13,15 @@ interface FolderViewerProps {
 }
 
 export function FolderViewer({ folder }: FolderViewerProps) {
-  const router = useRouter();
   const [isRenamePopoverOpen, setIsRenamePopoverOpen] = useState(false);
+  const { handleFolderDelete } = useFolder({
+    folderId: folder.id,
+    folderName: folder.name,
+    parentFolderId: folder.parentFolderId,
+  });
 
   const handleFolderRename = () => {
     setIsRenamePopoverOpen(true);
-  };
-
-  const handleFolderDelete = async () => {
-    try {
-      await deleteFolder(folder.id);
-
-      // Show toast with undo action
-      toast(`Folder "${folder.name}" has been deleted`, {
-        description: "You can undo this action",
-        action: {
-          label: "Undo",
-          //eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onClick: async () => {
-            try {
-              await restoreFolder(folder.id);
-              router.refresh();
-              toast.success("Folder restored");
-            } catch (error) {
-              console.error("Failed to restore folder:", error);
-              toast.error("Failed to restore folder");
-            }
-          },
-        },
-      });
-
-      // Navigate to parent folder or root after deletion
-      const redirectUrl = folder.parentFolderId
-        ? `/dashboard/${folder.parentFolderId}`
-        : "/dashboard";
-      router.push(redirectUrl);
-
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to delete folder:", error);
-      toast.error("Failed to delete folder");
-    }
   };
 
   const totalItems =

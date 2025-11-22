@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import { extractLastUuid } from "../lib/uuid.utils";
+import { extractLastUuid } from "~/shared/lib/uuid.utils";
 import { useEffect, useState } from "react";
 
 export function useUrlFolder() {

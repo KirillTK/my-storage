@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { upload } from "@vercel/blob/client";
-import { formatBytes } from "../lib/formatters.utils";
+import { formatBytes } from "../../../shared/lib/formatters.utils";
 import { createDocumentFromBlob } from "~/server/actions/document.actions";
 
 interface UseFileUploadOptions {

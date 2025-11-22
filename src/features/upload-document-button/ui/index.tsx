@@ -4,8 +4,8 @@ import { Upload } from "lucide-react";
 import { Button } from "~/shared/components/ui/button";
 import { UploadDocumentModal } from "../components/upload-document-modal";
 import { useState } from "react";
-import { useUrlFolder } from "~/shared/hooks/use-url-folder";
-import { useFileUpload } from "~/shared/hooks/use-file-upload";
+import { useUrlFolder } from "~/entities/folder/hooks/use-url-folder";
+import { useFileUpload } from "~/entities/document/hooks/use-file-upload";
 
 export function UploadDocumentButton() {
   const [open, setOpen] = useState(false);
