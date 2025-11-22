@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, isNull, ilike, or } from "drizzle-orm";
+import { and, eq, isNull, ilike } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema/documents";

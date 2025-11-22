@@ -53,7 +53,7 @@ export function SearchStorage() {
       }
     };
 
-    performSearch();
+    void performSearch();
   }, [debouncedQuery]);
 
   // Show dropdown when there's a query

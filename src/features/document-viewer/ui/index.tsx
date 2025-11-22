@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { File } from "lucide-react";
 import type { DocumentModel } from "~/server/db/schema";
 import { DocumentActionsMenu } from "../components/document-actions-menu";
 import { RenameDocumentPopover } from "../components/rename-document-popover";
@@ -11,16 +10,9 @@ import {
   getFileExtension,
   getFileNameWithoutExtension,
 } from "~/shared/lib/file.utils";
-import Image from "next/image";
-import {
-  COLOR_FILE_TYPE_MAP,
-  ICON_FILE_TYPE_MAP,
-} from "~/entities/document/const/icon-map-by-type.const";
-import { cn } from "~/shared/lib/utils";
 import { FileBadge } from "~/entities/document/components/file-badge/ui";
 import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
 import { ImageBadge } from "~/entities/document/components/image-badge/ui";
-import { useDocument } from "../../../entities/document/hooks/use-document";
 
 interface DocumentViewerProps {
   document: DocumentModel;

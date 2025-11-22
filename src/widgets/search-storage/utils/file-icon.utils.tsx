@@ -6,7 +6,7 @@ import {
 import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
 import { getFileExtension } from "~/shared/lib/file.utils";
 
-export function getFileIcon(filename: string, className: string = "h-5 w-5") {
+export function getFileIcon(filename: string, className = "h-5 w-5") {
   const extension = getFileExtension(filename) ?? "";
 
   // Check if it's an image
@@ -15,7 +15,7 @@ export function getFileIcon(filename: string, className: string = "h-5 w-5") {
   }
 
   // Get icon from map or default to File icon
-  const IconComponent = ICON_FILE_TYPE_MAP.get(extension) || File;
+  const IconComponent = ICON_FILE_TYPE_MAP.get(extension) ?? File;
   return <IconComponent className={className} />;
 }
 
@@ -32,7 +32,7 @@ export function getFileColors(filename: string): {
 
   // Get colors from map or default
   return (
-    COLOR_FILE_TYPE_MAP.get(extension) || {
+    COLOR_FILE_TYPE_MAP.get(extension) ?? {
       bg: "bg-gray-500/15",
       icon: "text-gray-600",
     }
