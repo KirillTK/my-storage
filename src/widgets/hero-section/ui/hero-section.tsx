@@ -24,18 +24,16 @@ export async function HeroSection() {
           <div className="border-border bg-accent/30 inline-flex items-center gap-2 rounded-full border px-4 py-2">
             <span className="bg-primary inline-block h-2 w-2 rounded-full" />
             <span className="text-foreground text-sm font-medium">
-              Secure file management, reimagined
+              Your personal file storage
             </span>
           </div>
 
           <h2 className="text-foreground text-4xl leading-tight font-bold sm:text-5xl lg:text-6xl">
-            Your secure data room for seamless collaboration
+            Store, organize, and access your files anywhere
           </h2>
 
           <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-            Upload, organize, and share files with enterprise-grade security.
-            Manage permissions, track versions, and maintain complete audit
-            logs—all in one intuitive platform.
+            A simple and efficient way to manage your digital files with folders, preview, and search.
           </p>
 
           {/* CTA Buttons */}
@@ -66,53 +64,61 @@ export async function HeroSection() {
               <span className="text-xl">📁</span>
             </div>
             <h3 className="text-foreground mb-2 text-lg font-semibold">
-              Easy Organization
+              Folder Organization
             </h3>
             <p className="text-muted-foreground text-sm">
-              Create folders, upload files, and keep everything organized with
-              an intuitive drag-and-drop interface.
+              Create nested folders, upload files, and keep everything organized
+              with an intuitive interface and breadcrumb navigation.
             </p>
           </div>
 
           {/* Feature 2 */}
           <div className="border-border bg-card rounded-lg border p-6 text-left transition-shadow hover:shadow-md">
             <div className="bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-              <span className="text-xl">🔒</span>
+              <span className="text-xl">👁️</span>
             </div>
             <h3 className="text-foreground mb-2 text-lg font-semibold">
-              Enterprise Security
+              File Preview
             </h3>
             <p className="text-muted-foreground text-sm">
-              Bank-level encryption and advanced security controls keep your
-              sensitive data protected at all times.
+              Preview your files instantly with support for images, PDFs,
+              videos, audio, and text documents directly in your browser.
             </p>
           </div>
 
           {/* Feature 3 */}
           <div className="border-border bg-card rounded-lg border p-6 text-left transition-shadow hover:shadow-md">
             <div className="bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-              <span className="text-xl">👥</span>
+              <span className="text-xl">🔍</span>
             </div>
             <h3 className="text-foreground mb-2 text-lg font-semibold">
-              Collaboration Made Easy
+              Quick Search
             </h3>
             <p className="text-muted-foreground text-sm">
-              Share files with team members, manage permissions, and collaborate
-              in real-time from anywhere.
+              Find your files and folders quickly with instant search
+              functionality that looks through all your stored content.
             </p>
           </div>
         </div>
 
-        {/* Social Proof */}
+        {/* Stats */}
         <div className="border-border w-full border-t pt-12">
           <p className="text-muted-foreground mb-6 text-sm">
-            Trusted by teams worldwide
+            Your files, your way
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8">
-            <span className="text-foreground/60 font-semibold">TechCorp</span>
-            <span className="text-foreground/60 font-semibold">DataSync</span>
-            <span className="text-foreground/60 font-semibold">CloudBase</span>
-            <span className="text-foreground/60 font-semibold">SecureFlow</span>
+          <div className="flex flex-wrap items-center justify-center gap-12">
+            <div className="text-center">
+              <div className="text-foreground text-2xl font-bold">Unlimited</div>
+              <div className="text-muted-foreground text-sm">Storage Space</div>
+            </div>
+            <div className="text-center">
+              <div className="text-foreground text-2xl font-bold">All Types</div>
+              <div className="text-muted-foreground text-sm">File Support</div>
+            </div>
+            <div className="text-center">
+              <div className="text-foreground text-2xl font-bold">Instant</div>
+              <div className="text-muted-foreground text-sm">File Preview</div>
+            </div>
           </div>
         </div>
       </div>

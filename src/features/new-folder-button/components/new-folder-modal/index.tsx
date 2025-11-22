@@ -7,7 +7,6 @@ import { Folder } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -47,11 +46,6 @@ export function CreateFolderDialog({
             </div>
             <DialogTitle>{"Create New Folder"}</DialogTitle>
           </div>
-          <DialogDescription>
-            {
-              "Enter a name for your new folder. Folder names must be unique within the current directory."
-            }
-          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
