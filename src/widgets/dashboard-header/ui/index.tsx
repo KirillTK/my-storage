@@ -24,9 +24,7 @@ export function DashboardHeader({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="flex-1 max-w-2xl">
-          {children}
-        </div>
+        <div className="max-w-2xl flex-1">{children}</div>
 
         <div className="flex items-center gap-2">
           <NewFolderButton />

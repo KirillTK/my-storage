@@ -1,7 +1,5 @@
-import type { DocumentModel } from '~/server/db/schema';
-import Image from 'next/image';
-
-
+import type { DocumentModel } from "~/server/db/schema";
+import Image from "next/image";
 
 export function ImageBadge({ document }: { document: DocumentModel }) {
   return (

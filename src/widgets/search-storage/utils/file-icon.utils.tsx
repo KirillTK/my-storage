@@ -4,7 +4,7 @@ import {
   COLOR_FILE_TYPE_MAP,
 } from "~/entities/document/const/icon-map-by-type.const";
 import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
-import { getFileExtension } from '~/shared/lib/file.utils';
+import { getFileExtension } from "~/shared/lib/file.utils";
 
 export function getFileIcon(filename: string, className: string = "h-5 w-5") {
   const extension = getFileExtension(filename) ?? "";
@@ -38,4 +38,3 @@ export function getFileColors(filename: string): {
     }
   );
 }
-

@@ -1,17 +1,11 @@
 "use client";
 import { useState } from "react";
 import { File } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import type { DocumentModel } from "~/server/db/schema";
 import { DocumentActionsMenu } from "../components/document-actions-menu";
 import { RenameDocumentPopover } from "../components/rename-document-popover";
 import { DocumentPreviewModal } from "../components/document-preview-modal";
 import { Popover, PopoverAnchor } from "~/shared/components/ui/popover";
-import {
-  deleteDocument,
-  restoreDocument,
-} from "~/server/actions/document.actions";
 import { formatDate, formatFileSize } from "~/shared/lib/formatters.utils";
 import {
   getFileExtension,
@@ -23,16 +17,16 @@ import {
   ICON_FILE_TYPE_MAP,
 } from "~/entities/document/const/icon-map-by-type.const";
 import { cn } from "~/shared/lib/utils";
-import { FileBadge } from '~/entities/document/components/file-badge/ui';
-import { IMAGE_FORMATS } from '~/entities/document/const/image-format.const';
-import { ImageBadge } from '~/entities/document/components/image-badge/ui';
+import { FileBadge } from "~/entities/document/components/file-badge/ui";
+import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
+import { ImageBadge } from "~/entities/document/components/image-badge/ui";
+import { useDocument } from "../../../entities/document/hooks/use-document";
 
 interface DocumentViewerProps {
   document: DocumentModel;
 }
 
 export function DocumentViewer({ document }: DocumentViewerProps) {
-  const router = useRouter();
   const [isRenamePopoverOpen, setIsRenamePopoverOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
@@ -42,36 +36,6 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 
   const handleDocumentRename = () => {
     setIsRenamePopoverOpen(true);
-  };
-
-  const handleDocumentDelete = async () => {
-    try {
-      await deleteDocument(document.id);
-
-      // Show toast with undo action
-      toast(`Document "${document.name}" has been deleted`, {
-        description: "You can undo this action",
-        action: {
-          label: "Undo",
-          //eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onClick: async () => {
-            try {
-              await restoreDocument(document.id);
-              router.refresh();
-              toast.success("Document restored");
-            } catch (error) {
-              console.error("Failed to restore document:", error);
-              toast.error("Failed to restore document");
-            }
-          },
-        },
-      });
-
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to delete document:", error);
-      toast.error("Failed to delete document");
-    }
   };
 
   const fileExtension = getFileExtension(document.name);
@@ -104,7 +68,6 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 document={document}
                 onPreview={() => setIsPreviewOpen(true)}
                 onRename={handleDocumentRename}
-                onDelete={handleDocumentDelete}
               />
             </div>
             <h3 className="text-foreground mb-1 font-medium text-balance wrap-break-word">

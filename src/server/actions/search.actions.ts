@@ -69,11 +69,9 @@ function getFileType(mimeType: string): string {
   if (mimeType.includes("pdf")) return "pdf";
   if (mimeType.includes("excel") || mimeType.includes("spreadsheet"))
     return "excel";
-  if (mimeType.includes("word") || mimeType.includes("document"))
-    return "word";
+  if (mimeType.includes("word") || mimeType.includes("document")) return "word";
   if (mimeType.includes("image")) return "image";
   if (mimeType.includes("video")) return "video";
   if (mimeType.includes("audio")) return "audio";
   return "file";
 }
-

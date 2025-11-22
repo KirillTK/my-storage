@@ -1,5 +1,5 @@
 import { DashboardHeader } from "~/widgets/dashboard-header/ui";
-import { SearchStorage } from '~/widgets/search-storage';
+import { SearchStorage } from "~/widgets/search-storage";
 
 export default function DashboardLayout({
   children,

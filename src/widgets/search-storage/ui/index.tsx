@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { Search, Folder, Loader2 } from "lucide-react";
 import { Input } from "~/shared/components/ui/input";
 import { Kbd, KbdGroup } from "~/shared/components/ui/kbd";
-import { searchStorage, type SearchResults } from "~/server/actions/search.actions";
+import {
+  searchStorage,
+  type SearchResults,
+} from "~/server/actions/search.actions";
 import { useDebounce } from "~/shared/hooks/use-debounce";
 import { cn } from "~/shared/lib/utils";
 import type { DocumentModel } from "~/server/db/schema/documents";
-import {
-  getFileIcon,
-  getFileColors,
-} from "../utils/file-icon.utils";
-import { getFileTypeLabel } from '~/shared/lib/file.utils';
-import { DocumentPreviewModal } from '~/features/document-viewer/components/document-preview-modal';
+import { getFileIcon, getFileColors } from "../utils/file-icon.utils";
+import { getFileTypeLabel } from "~/shared/lib/file.utils";
+import { DocumentPreviewModal } from "~/features/document-viewer/components/document-preview-modal";
 
 const DEBOUNCE_DELAY = 500;
 
@@ -22,7 +22,8 @@ export function SearchStorage() {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<DocumentModel | null>(null);
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentModel | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [results, setResults] = useState<SearchResults>({
     folders: [],
@@ -100,7 +101,9 @@ export function SearchStorage() {
     setQuery("");
   };
 
-  const handleFileClick = (file: DocumentModel & { type: string; size: number }) => {
+  const handleFileClick = (
+    file: DocumentModel & { type: string; size: number },
+  ) => {
     setIsOpen(false);
     setQuery("");
     setSelectedDocument(file);
@@ -121,17 +124,17 @@ export function SearchStorage() {
   return (
     <div ref={searchRef} className="relative w-full max-w-2xl">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <Input
           type="text"
           placeholder="Search files and folders..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="pl-10 pr-24"
+          className="pr-24 pl-10"
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-2">
           {isLoading && (
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
           )}
           <KbdGroup>
             <Kbd className="hidden sm:inline-flex">⌘</Kbd>
@@ -141,34 +144,42 @@ export function SearchStorage() {
       </div>
 
       {isOpen && (
-        <div className="absolute top-full z-50 mt-2 w-full rounded-xl border border-border bg-card shadow-xl">
+        <div className="border-border bg-card absolute top-full z-50 mt-2 w-full rounded-xl border shadow-xl">
           <div className="max-h-96 overflow-y-auto">
             {showNoResults && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <Search className="h-8 w-8 text-muted-foreground" />
+                <div className="bg-muted mb-3 flex h-16 w-16 items-center justify-center rounded-full">
+                  <Search className="text-muted-foreground h-8 w-8" />
                 </div>
-                <p className="text-sm font-medium text-foreground">No results found</p>
-                <p className="mt-1 text-xs text-muted-foreground">Try searching with different keywords</p>
+                <p className="text-foreground text-sm font-medium">
+                  No results found
+                </p>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Try searching with different keywords
+                </p>
               </div>
             )}
             {results.folders.length > 0 && (
-              <div className="border-b border-border">
+              <div className="border-border border-b">
                 <div className="px-4 py-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Folders</p>
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                    Folders
+                  </p>
                 </div>
                 {results.folders.map((folder) => (
                   <button
                     key={folder.id}
                     onClick={() => handleFolderClick(folder)}
-                    className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-accent"
+                    className="hover:bg-accent flex w-full items-center gap-3 px-4 py-3 transition-colors"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-950">
                       <Folder className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-medium text-foreground">{folder.name}</p>
-                      <p className="text-xs text-muted-foreground">Folder</p>
+                      <p className="text-foreground text-sm font-medium">
+                        {folder.name}
+                      </p>
+                      <p className="text-muted-foreground text-xs">Folder</p>
                     </div>
                   </button>
                 ))}
@@ -177,7 +188,9 @@ export function SearchStorage() {
             {results.files.length > 0 && (
               <div>
                 <div className="px-4 py-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Files</p>
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                    Files
+                  </p>
                 </div>
                 {results.files.map((file) => {
                   const colors = getFileColors(file.name);
@@ -186,7 +199,7 @@ export function SearchStorage() {
                     <button
                       key={file.id}
                       onClick={() => handleFileClick(file)}
-                      className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-accent"
+                      className="hover:bg-accent flex w-full items-center gap-3 px-4 py-3 transition-colors"
                     >
                       <div
                         className={cn(
@@ -197,7 +210,7 @@ export function SearchStorage() {
                         {getFileIcon(file.name, cn("h-5 w-5", colors.icon))}
                       </div>
                       <div className="flex-1 text-left">
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-foreground text-sm font-medium">
                           {file.name}
                         </p>
                         <div className="flex items-center gap-2">
@@ -210,7 +223,7 @@ export function SearchStorage() {
                           >
                             {fileLabel}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             {(file.size / 1024).toFixed(1)} KB
                           </span>
                         </div>
@@ -232,4 +245,3 @@ export function SearchStorage() {
     </div>
   );
 }
-

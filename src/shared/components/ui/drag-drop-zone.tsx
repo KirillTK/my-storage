@@ -63,7 +63,7 @@ export function DragDropZone({ folderId, children }: DragDropZoneProps) {
       {children}
       {isDragging && (
         <div className="bg-background/95 absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-          <div className="border-primary bg-card/50 rounded-xl border-2 border-dashed p-12 absolute top-[40px]">
+          <div className="border-primary bg-card/50 absolute top-[40px] rounded-xl border-2 border-dashed p-12">
             <div className="flex flex-col items-center gap-4">
               <div className="bg-primary/10 rounded-full p-6">
                 <Upload className="text-primary h-12 w-12" />

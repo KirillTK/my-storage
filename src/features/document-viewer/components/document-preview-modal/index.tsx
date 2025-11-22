@@ -15,6 +15,7 @@ import { AudioPreview } from "./components/audio-preview";
 import { TextPreview } from "./components/text-preview";
 import { UnsupportedPreview } from "./components/unsupported-preview";
 import { useTextContent } from "./hooks/use-text-content";
+import { DownloadFileButton } from "~/entities/document/components/download-file-button/ui";
 
 interface DocumentPreviewModalProps {
   document: DocumentModel | null;
@@ -138,15 +139,20 @@ export function DocumentPreviewModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="inset-0! top-0! left-0! right-0! bottom-0! h-screen! w-screen! max-w-none! translate-x-0! translate-y-0! flex flex-col rounded-none border-0 p-0"
+        className="inset-0! top-0! right-0! bottom-0! left-0! flex h-screen! w-screen! max-w-none! translate-x-0! translate-y-0! flex-col rounded-none border-0 p-0"
         showCloseButton={true}
       >
         <DialogHeader className="border-b px-6 pt-6 pb-4">
           <DialogTitle className="truncate pr-8 text-left">
-            {document.name}
+            <div className="flex items-center justify-between gap-2">
+              <span className="truncate">{document.name}</span>
+              <DownloadFileButton document={document} />
+            </div>
           </DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-auto p-6 h-full w-full">{renderPreview()}</div>
+        <div className="h-full w-full flex-1 overflow-auto p-6">
+          {renderPreview()}
+        </div>
       </DialogContent>
     </Dialog>
   );
