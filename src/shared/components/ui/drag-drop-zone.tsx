@@ -2,7 +2,7 @@
 
 import { useState, useRef, type DragEvent, type ReactNode } from "react";
 import { Upload } from "lucide-react";
-import { useFileUpload } from "~/shared/hooks/useFileUpload";
+import { useFileUpload } from "~/shared/hooks/use-file-upload";
 
 interface DragDropZoneProps {
   folderId?: string | null;

@@ -14,6 +14,31 @@ export const getFileNameWithoutExtension = (fileName: string) => {
   return fileName.split(".").slice(0, -1).join(".");
 };
 
+export function getFileTypeLabel(mimeType: string, filename: string): string {
+  const extension = getFileExtension(filename);
+
+  const typeMap: [string | RegExp, string][] = [
+    ["pdf", "PDF"],
+    [/(excel|spreadsheet)/i, "EXCEL"],
+    [/(word|document)/i, "WORD"],
+    ["image", "IMAGE"],
+    ["video", "VIDEO"],
+    ["audio", "AUDIO"],
+    [/(zip|archive)/i, "ARCHIVE"],
+  ];
+
+  for (const [pattern, label] of typeMap) {
+    if (typeof pattern === "string" && mimeType.includes(pattern)) {
+      return label;
+    }
+    if (pattern instanceof RegExp && pattern.test(mimeType)) {
+      return label;
+    }
+  }
+
+  return extension ? extension.toUpperCase() : "FILE";
+}
+
 export async function downloadFileWithProgress(
   url: string,
   filename: string,

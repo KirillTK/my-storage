@@ -5,7 +5,7 @@ import { CreateFolderDialog } from "../components/new-folder-modal";
 import { useState } from "react";
 import { createFolder } from "~/server/actions/folder.actions";
 import { useRouter } from "next/navigation";
-import { useUrlFolder } from "~/shared/hooks/useUrlFolder";
+import { useUrlFolder } from "~/shared/hooks/use-url-folder";
 
 export function NewFolderButton() {
   const [open, setOpen] = useState(false);

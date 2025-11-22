@@ -2,19 +2,20 @@ import { UserProfileMenu } from "~/entities/user/components/user-profile-menu/ui
 import { FolderOpen } from "lucide-react";
 import { NewFolderButton } from "~/features/new-folder-button/ui";
 import { UploadDocumentButton } from "~/features/upload-document-button/ui";
+import { SearchStorage } from "~/features/search-storage";
 import Link from "next/link";
 
 export function DashboardHeader() {
   return (
     <header className="border-border bg-card border-b">
-      <div className="flex items-center justify-between px-6 py-4">
+      <div className="flex items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
             <Link href="/dashboard">
               <FolderOpen className="text-primary-foreground h-5 w-5" />
             </Link>
           </div>
-          <div>
+          <div className="hidden md:block">
             <h1 className="text-foreground text-xl font-semibold">
               {"Data Room"}
             </h1>
@@ -22,6 +23,10 @@ export function DashboardHeader() {
               {"Secure document management"}
             </p>
           </div>
+        </div>
+
+        <div className="flex-1 max-w-2xl">
+          <SearchStorage />
         </div>
 
         <div className="flex items-center gap-2">
