@@ -23,7 +23,7 @@ export function PDFPreview({
   }
 
   return (
-    <div className="relative h-[60vh] w-full">
+    <div className="relative h-full w-full">
       {isLoading && (
         <div className="bg-muted/50 absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />

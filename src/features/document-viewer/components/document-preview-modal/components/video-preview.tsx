@@ -21,7 +21,7 @@ export function VideoPreview({
   }
 
   return (
-    <div className="relative flex h-[60vh] w-full items-center justify-center bg-black">
+    <div className="relative flex h-full w-full items-center justify-center bg-black">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner className="text-white" />

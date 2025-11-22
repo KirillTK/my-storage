@@ -24,7 +24,7 @@ export function ImagePreview({
   }
 
   return (
-    <div className="bg-muted/50 relative flex h-[60vh] w-full items-center justify-center">
+    <div className="bg-muted/50 relative flex h-full w-full items-center justify-center">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />

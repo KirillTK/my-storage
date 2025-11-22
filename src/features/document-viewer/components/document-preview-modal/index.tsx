@@ -30,6 +30,21 @@ export function DocumentPreviewModal({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Detect file type - safe to do even if document is null
+  const fileTypeInfo = document
+    ? detectFileType(document.name, document.mimeType)
+    : null;
+
+  // Always call hooks unconditionally
+  const {
+    textContent,
+    isLoading: isTextLoading,
+    hasError: hasTextError,
+  } = useTextContent(
+    fileTypeInfo?.type === "text" && document ? document.blobUrl : null,
+    isOpen,
+  );
+
   // Reset loading state when document or modal state changes
   useEffect(() => {
     if (document && isOpen) {
@@ -38,19 +53,8 @@ export function DocumentPreviewModal({
     }
   }, [document, isOpen, setIsLoading, setHasError]);
 
+  // Early return AFTER all hooks have been called
   if (!document) return null;
-
-  const fileTypeInfo = detectFileType(document.name, document.mimeType);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const {
-    textContent,
-    isLoading: isTextLoading,
-    hasError: hasTextError,
-  } = useTextContent(
-    fileTypeInfo.type === "text" ? document.blobUrl : null,
-    isOpen,
-  );
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -127,13 +131,14 @@ export function DocumentPreviewModal({
   ]);
 
   const renderPreview = () => {
+    if (!fileTypeInfo) return <UnsupportedPreview />;
     return previewMap.get(fileTypeInfo.type)?.() ?? <UnsupportedPreview />;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex max-h-[85vh] w-[90vw] max-w-4xl flex-col p-0"
+        className="inset-0! top-0! left-0! right-0! bottom-0! h-screen! w-screen! max-w-none! translate-x-0! translate-y-0! flex flex-col rounded-none border-0 p-0"
         showCloseButton={true}
       >
         <DialogHeader className="border-b px-6 pt-6 pb-4">
@@ -141,7 +146,7 @@ export function DocumentPreviewModal({
             {document.name}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-auto p-6">{renderPreview()}</div>
+        <div className="flex-1 overflow-auto p-6 h-full w-full">{renderPreview()}</div>
       </DialogContent>
     </Dialog>
   );

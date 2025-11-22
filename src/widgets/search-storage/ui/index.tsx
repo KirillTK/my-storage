@@ -6,7 +6,7 @@ import { Search, Folder, Loader2 } from "lucide-react";
 import { Input } from "~/shared/components/ui/input";
 import { Kbd, KbdGroup } from "~/shared/components/ui/kbd";
 import { searchStorage, type SearchResults } from "~/server/actions/search.actions";
-import { useDebounce } from "../../../shared/hooks/use-debounce";
+import { useDebounce } from "~/shared/hooks/use-debounce";
 import { cn } from "~/shared/lib/utils";
 import type { DocumentModel } from "~/server/db/schema/documents";
 import {
@@ -14,6 +14,7 @@ import {
   getFileColors,
 } from "../utils/file-icon.utils";
 import { getFileTypeLabel } from '~/shared/lib/file.utils';
+import { DocumentPreviewModal } from '~/features/document-viewer/components/document-preview-modal';
 
 const DEBOUNCE_DELAY = 500;
 
@@ -21,6 +22,8 @@ export function SearchStorage() {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<DocumentModel | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [results, setResults] = useState<SearchResults>({
     folders: [],
     files: [],
@@ -98,10 +101,15 @@ export function SearchStorage() {
   };
 
   const handleFileClick = (file: DocumentModel & { type: string; size: number }) => {
-    // You can implement file preview or download here
-    console.log("File clicked:", file);
     setIsOpen(false);
     setQuery("");
+    setSelectedDocument(file);
+    setIsPreviewOpen(true);
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewOpen(false);
+    setSelectedDocument(null);
   };
 
   const showNoResults =
@@ -215,6 +223,12 @@ export function SearchStorage() {
           </div>
         </div>
       )}
+
+      <DocumentPreviewModal
+        document={selectedDocument}
+        isOpen={isPreviewOpen}
+        onOpenChange={handleClosePreview}
+      />
     </div>
   );
 }

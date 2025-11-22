@@ -2,10 +2,9 @@ import { UserProfileMenu } from "~/entities/user/components/user-profile-menu/ui
 import { FolderOpen } from "lucide-react";
 import { NewFolderButton } from "~/features/new-folder-button/ui";
 import { UploadDocumentButton } from "~/features/upload-document-button/ui";
-import { SearchStorage } from "~/features/search-storage";
 import Link from "next/link";
 
-export function DashboardHeader() {
+export function DashboardHeader({ children }: { children: React.ReactNode }) {
   return (
     <header className="border-border bg-card border-b">
       <div className="flex items-center justify-between gap-4 px-6 py-4">
@@ -26,7 +25,7 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex-1 max-w-2xl">
-          <SearchStorage />
+          {children}
         </div>
 
         <div className="flex items-center gap-2">

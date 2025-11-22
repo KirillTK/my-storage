@@ -14,7 +14,7 @@ export function TextPreview({
 }: TextPreviewProps) {
   if (isLoading) {
     return (
-      <div className="bg-muted/50 flex h-[60vh] items-center justify-center">
+      <div className="bg-muted/50 flex h-full items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -25,7 +25,7 @@ export function TextPreview({
   }
 
   return (
-    <div className="bg-muted/30 h-[60vh] w-full overflow-auto rounded-lg border">
+    <div className="bg-muted/30 h-full w-full overflow-auto rounded-lg border">
       <pre className="p-4 font-mono text-sm wrap-break-word whitespace-pre-wrap">
         {content}
       </pre>

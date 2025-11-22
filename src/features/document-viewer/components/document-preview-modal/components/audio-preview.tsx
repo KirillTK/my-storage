@@ -23,7 +23,7 @@ export function AudioPreview({
   }
 
   return (
-    <div className="bg-muted/50 flex h-[60vh] flex-col items-center justify-center">
+    <div className="bg-muted/50 flex h-full flex-col items-center justify-center">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <LoadingSpinner />
