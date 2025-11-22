@@ -42,7 +42,7 @@ export function FolderViewer({ folder }: FolderViewerProps) {
             <div className="pointer-events-none absolute inset-0" />
           </PopoverAnchor>
 
-          <Link href={`/dashboard/${folder.id}`}>
+          <Link href={`/dashboard/${folder.id}`} prefetch>
             <div className="flex min-w-0 flex-1 items-center gap-3 p-2">
               <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-950">
                 <Folder className="h-6 w-6 text-orange-600 dark:text-orange-400" />

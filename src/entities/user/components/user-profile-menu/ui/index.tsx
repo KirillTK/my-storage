@@ -37,7 +37,7 @@ export async function UserProfileMenu({
       <DropdownMenuContent>
         {!hideDashboardLink && (
           <DropdownMenuItem>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/dashboard" prefetch>Dashboard</Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onClick={handleSignOut}>Logout</DropdownMenuItem>

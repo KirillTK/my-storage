@@ -10,7 +10,7 @@ export function DashboardHeader({ children }: { children: React.ReactNode }) {
       <div className="flex items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-            <Link href="/dashboard">
+            <Link href="/dashboard" prefetch>
               <FolderOpen className="text-primary-foreground h-5 w-5" />
             </Link>
           </div>

@@ -25,7 +25,7 @@ export function FolderBreadcrumbs({ folderPath }: FolderBreadcrumbsProps) {
       <BreadcrumbList className="text-lg">
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/dashboard">My Drive</Link>
+            <Link href="/dashboard" prefetch>My Drive</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {folderPath.map((folder, index) => {
@@ -38,7 +38,7 @@ export function FolderBreadcrumbs({ folderPath }: FolderBreadcrumbsProps) {
                   <BreadcrumbPage>{folder.name}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                    <Link href={`/dashboard/${folder.id}`}>{folder.name}</Link>
+                    <Link href={`/dashboard/${folder.id}`} prefetch>{folder.name}</Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

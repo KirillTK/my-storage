@@ -10,7 +10,11 @@ interface UseFolderParams {
   parentFolderId?: string | null;
 }
 
-export function useFolder({ folderId, folderName, parentFolderId }: UseFolderParams) {
+export function useFolder({
+  folderId,
+  folderName,
+  parentFolderId,
+}: UseFolderParams) {
   const router = useRouter();
 
   const handleFolderDelete = async () => {
@@ -53,4 +57,3 @@ export function useFolder({ folderId, folderName, parentFolderId }: UseFolderPar
     handleFolderDelete,
   };
 }
-

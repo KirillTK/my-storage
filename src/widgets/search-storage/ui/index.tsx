@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Search, Folder, Loader2 } from "lucide-react";
 import { Input } from "~/shared/components/ui/input";
 import { Kbd, KbdGroup } from "~/shared/components/ui/kbd";
@@ -31,7 +31,6 @@ export function SearchStorage() {
   });
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
   const searchRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   // Perform search when debounced query changes
   useEffect(() => {
@@ -95,8 +94,7 @@ export function SearchStorage() {
     };
   }, []);
 
-  const handleFolderClick = (folder: { id: string; name: string }) => {
-    router.push(`/dashboard/${folder.id}`);
+  const handleFolderClick = () => {
     setIsOpen(false);
     setQuery("");
   };
@@ -167,9 +165,11 @@ export function SearchStorage() {
                   </p>
                 </div>
                 {results.folders.map((folder) => (
-                  <button
+                  <Link
                     key={folder.id}
-                    onClick={() => handleFolderClick(folder)}
+                    href={`/dashboard/${folder.id}`}
+                    prefetch
+                    onClick={handleFolderClick}
                     className="hover:bg-accent flex w-full items-center gap-3 px-4 py-3 transition-colors"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-950">
@@ -181,7 +181,7 @@ export function SearchStorage() {
                       </p>
                       <p className="text-muted-foreground text-xs">Folder</p>
                     </div>
-                  </button>
+                  </Link>
                 ))}
               </div>
             )}
