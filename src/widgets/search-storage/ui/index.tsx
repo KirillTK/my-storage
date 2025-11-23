@@ -216,7 +216,7 @@ export function SearchStorage() {
                         <div className="flex items-center gap-2">
                           <span
                             className={cn(
-                              "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
+                              "inline-flex rounded-full py-0.5 text-xs font-medium",
                               colors.bg.replace("/15", "/20"),
                               colors.icon,
                             )}
