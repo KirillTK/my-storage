@@ -1,6 +1,6 @@
 # Cron Job Setup - Document Cleanup
 
-This project includes an automated cleanup cron job that runs every 10 minutes to permanently remove soft-deleted documents from both the database and Vercel Blob storage.
+This project includes an automated cleanup cron job that runs once daily at 1:00 AM to permanently remove soft-deleted documents from both the database and Vercel Blob storage.
 
 ## How It Works
 
@@ -21,19 +21,20 @@ The cron schedule is defined in `vercel.json`:
   "crons": [
     {
       "path": "/api/cron/cleanup",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 1 * * *"
     }
   ]
 }
 ```
 
-**Schedule Format:** `*/10 * * * *` means "every 10 minutes"
+**Schedule Format:** `0 1 * * *` means "daily at 1:00 AM"
 
 To change the frequency, modify the cron expression:
-- `*/5 * * * *` - Every 5 minutes
-- `*/15 * * * *` - Every 15 minutes
-- `0 * * * *` - Every hour
 - `0 0 * * *` - Every day at midnight
+- `0 2 * * *` - Every day at 2:00 AM
+- `0 */6 * * *` - Every 6 hours
+- `0 1 * * 0` - Every Sunday at 1:00 AM
+- `0 1 1 * *` - First day of every month at 1:00 AM
 
 ### 2. Environment Variables
 
