@@ -26,6 +26,7 @@ export function RenameDocumentPopover({
   const [newDocumentName, setNewDocumentName] = useState(currentName);
   const [isRenaming, setIsRenaming] = useState(false);
   const justOpenedRef = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,7 +36,17 @@ export function RenameDocumentPopover({
       const timer = setTimeout(() => {
         justOpenedRef.current = false;
       }, 200);
-      return () => clearTimeout(timer);
+
+      // Focus the input after a brief delay to ensure popover is fully rendered
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(focusTimer);
+      };
     }
   }, [isOpen, currentName]);
 
@@ -96,6 +107,7 @@ export function RenameDocumentPopover({
         <div className="space-y-2">
           <h4 className="text-sm font-medium">Rename Document</h4>
           <Input
+            ref={inputRef}
             value={newDocumentName}
             onChange={(e) => setNewDocumentName(e.target.value)}
             placeholder="Document name"

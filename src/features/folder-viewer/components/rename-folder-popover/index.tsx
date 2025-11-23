@@ -24,6 +24,7 @@ export function RenameFolderPopover({
   const [newFolderName, setNewFolderName] = useState(currentName);
   const [isRenaming, setIsRenaming] = useState(false);
   const justOpenedRef = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -33,7 +34,17 @@ export function RenameFolderPopover({
       const timer = setTimeout(() => {
         justOpenedRef.current = false;
       }, 200);
-      return () => clearTimeout(timer);
+
+      // Focus the input after a brief delay to ensure popover is fully rendered
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(focusTimer);
+      };
     }
   }, [isOpen, currentName]);
 
@@ -89,6 +100,7 @@ export function RenameFolderPopover({
         <div className="space-y-2">
           <h4 className="text-sm font-medium">Rename Folder</h4>
           <Input
+            ref={inputRef}
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
             placeholder="Folder name"

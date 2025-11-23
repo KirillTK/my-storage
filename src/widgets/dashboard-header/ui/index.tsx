@@ -15,9 +15,11 @@ export function DashboardHeader({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
           <div className="hidden md:block">
-            <h1 className="text-foreground text-xl font-semibold">
-              {"Data Room"}
-            </h1>
+            <Link href="/dashboard" prefetch>
+              <h1 className="text-foreground text-xl font-semibold">
+                {"Data Room"}
+              </h1>
+            </Link>
             <p className="text-muted-foreground text-sm">
               {"Secure document management"}
             </p>
