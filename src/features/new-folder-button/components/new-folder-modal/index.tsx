@@ -41,8 +41,8 @@ export function CreateFolderDialog({
       <DialogContent>
         <DialogHeader>
           <div className="mb-2 flex items-center gap-3">
-            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-              <Folder className="text-primary h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-950">
+              <Folder className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             </div>
             <DialogTitle>{"Create New Folder"}</DialogTitle>
           </div>

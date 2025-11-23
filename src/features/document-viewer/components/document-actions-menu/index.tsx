@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
 } from "~/shared/components/ui/dropdown-menu";
 import { Button } from "~/shared/components/ui/button";
-import { Download, Edit2, Eye, MoreVertical, Trash2 } from "lucide-react";
+import { Download, Edit2, Eye, Info, MoreVertical, Trash2 } from "lucide-react";
 import type { DocumentModel } from "~/server/db/schema";
 import { useDocument } from "../../../../entities/document/hooks/use-document";
 
@@ -15,12 +15,14 @@ interface DocumentActionsMenuProps {
   document: DocumentModel;
   onPreview: () => void;
   onRename: () => void;
+  onMetadata: () => void;
 }
 
 export function DocumentActionsMenu({
   document,
   onPreview,
   onRename,
+  onMetadata,
 }: DocumentActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -55,6 +57,14 @@ export function DocumentActionsMenu({
     await downloadDocument();
   };
 
+  const handleMetadata = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(false);
+    setTimeout(() => {
+      onMetadata();
+    }, 150);
+  };
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -74,6 +84,10 @@ export function DocumentActionsMenu({
         <DropdownMenuItem onClick={handleRename}>
           <Edit2 className="mr-2 h-4 w-4" />
           Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleMetadata}>
+          <Info className="mr-2 h-4 w-4" />
+          View Metadata
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDelete} className="text-destructive">
           <Trash2 className="mr-2 h-4 w-4" />

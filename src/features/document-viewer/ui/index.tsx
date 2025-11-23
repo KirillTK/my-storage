@@ -5,10 +5,15 @@ import type { DocumentModel } from "~/server/db/schema";
 import { DocumentActionsMenu } from "../components/document-actions-menu";
 import { RenameDocumentPopover } from "../components/rename-document-popover";
 import { DocumentPreviewModal } from "../components/document-preview-modal";
+import {
+  MetadataViewer,
+  type MetadataItem,
+} from "../components/metadata-viewer";
 import { Popover, PopoverAnchor } from "~/shared/components/ui/popover";
 import {
   getFileExtension,
   getFileNameWithoutExtension,
+  getFileTypeLabel,
 } from "~/shared/lib/file.utils";
 import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
 import {
@@ -16,6 +21,7 @@ import {
   COLOR_FILE_TYPE_MAP,
 } from "~/entities/document/const/icon-map-by-type.const";
 import Image from "next/image";
+import { formatDate, formatFileSize } from "~/shared/lib/formatters.utils";
 
 interface DocumentViewerProps {
   document: DocumentModel;
@@ -24,6 +30,7 @@ interface DocumentViewerProps {
 export function DocumentViewer({ document }: DocumentViewerProps) {
   const [isRenamePopoverOpen, setIsRenamePopoverOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isMetadataOpen, setIsMetadataOpen] = useState(false);
 
   const handleDocumentClick = () => {
     setIsPreviewOpen(true);
@@ -32,6 +39,20 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const handleDocumentRename = () => {
     setIsRenamePopoverOpen(true);
   };
+
+  const handleMetadataView = () => {
+    setIsMetadataOpen(true);
+  };
+
+  const metadata: MetadataItem[] = [
+    { label: "File Name", value: document.name },
+    { label: "File Size", value: formatFileSize(document.fileSize) },
+    {
+      label: "Document Type",
+      value: getFileTypeLabel(document.mimeType, document.name),
+    },
+    { label: "Created At", value: formatDate(document.createdAt) },
+  ];
 
   const fileExtension = getFileExtension(document.name);
   const fileNameWithoutExtension = getFileNameWithoutExtension(document.name);
@@ -45,11 +66,18 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   };
   const IconComponent = ICON_FILE_TYPE_MAP.get(fileExtension ?? "") ?? FileText;
 
+  const handleOpenChangePopover = (open: boolean) => {
+    if (!open) {
+      setIsRenamePopoverOpen(false);
+      setIsMetadataOpen(false);
+    }
+  };
+
   return (
     <>
       <Popover
-        open={isRenamePopoverOpen}
-        onOpenChange={setIsRenamePopoverOpen}
+        open={isRenamePopoverOpen || isMetadataOpen}
+        onOpenChange={handleOpenChangePopover}
         modal={true}
       >
         <div
@@ -72,6 +100,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
               document={document}
               onPreview={() => setIsPreviewOpen(true)}
               onRename={handleDocumentRename}
+              onMetadata={handleMetadataView}
             />
           </div>
 
@@ -107,6 +136,12 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           fileExtension={fileExtension ?? ""}
           isOpen={isRenamePopoverOpen}
           onOpenChange={setIsRenamePopoverOpen}
+        />
+
+        <MetadataViewer
+          metadata={metadata}
+          isOpen={isMetadataOpen}
+          onOpenChange={setIsMetadataOpen}
         />
       </Popover>
       <DocumentPreviewModal
