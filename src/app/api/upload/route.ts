@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "~/server/auth";
+import { createDocumentFromBlob } from "~/server/actions/document.actions";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "~/shared/lib/constants";
 
 interface ClientPayload {
   folderId?: string | null;
@@ -36,6 +38,13 @@ export async function POST(request: Request) {
             }
           }
 
+          // Validate file size
+          if (payload.fileSize && payload.fileSize > MAX_FILE_SIZE) {
+            throw new Error(
+              `File size exceeds the maximum allowed size of ${MAX_FILE_SIZE_MB}MB`,
+            );
+          }
+
           // Construct the callback URL dynamically from the request
           const url = new URL(request.url);
           const callbackUrl = `${url.protocol}//${url.host}/api/upload`;
@@ -60,21 +69,22 @@ export async function POST(request: Request) {
             callbackUrl,
           };
         },
-        // onUploadCompleted: async ({ blob, tokenPayload }) => {
-        //   const payload = JSON.parse(tokenPayload ?? "{}");
-        //   const client = payload ? JSON.parse(payload) : {};
+        onUploadCompleted: async ({ blob, tokenPayload }) => {
+          const payload = JSON.parse(tokenPayload ?? "{}") as {
+            userId: string;
+            folderId: string | null;
+            fileName: string;
+            fileSize: number;
+          };
 
-        //   console.log(client, "client", payload, "payload", blob, "blob");
-
-        //   await createDocumentFromBlob(
-        //     blob,
-        //     client.fileName,
-        //     client.fileSize,
-        //     blob.contentType || "application/octet-stream",
-        //     payload.folderId || null,
-        //     payload.userId,
-        //   );
-        // },
+          await createDocumentFromBlob(
+            blob,
+            payload.fileName,
+            payload.fileSize,
+            blob.contentType ?? "application/octet-stream",
+            payload.folderId ?? null,
+          );
+        },
       });
 
       return NextResponse.json(jsonResponse);

@@ -80,6 +80,7 @@ export function useDocument(document: DocumentModel) {
         id: toastId,
         description: document.name,
         duration: 2000,
+        action: null,
       });
     } catch (error) {
       console.error(`Download error for ${document.name}:`, error);
