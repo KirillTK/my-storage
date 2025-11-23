@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "~/server/auth";
 import { createDocumentFromBlob } from "~/server/actions/document.actions";
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "~/shared/lib/constants";
+import { revalidatePath } from "next/cache";
 
 interface ClientPayload {
   folderId?: string | null;
@@ -10,7 +11,7 @@ interface ClientPayload {
   fileSize?: number;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -70,20 +71,30 @@ export async function POST(request: Request) {
           };
         },
         onUploadCompleted: async ({ blob, tokenPayload }) => {
-          const payload = JSON.parse(tokenPayload ?? "{}") as {
-            userId: string;
-            folderId: string | null;
-            fileName: string;
-            fileSize: number;
-          };
+          try {
+            const payload = JSON.parse(tokenPayload ?? "{}") as {
+              userId: string;
+              folderId: string | null;
+              fileName: string;
+              fileSize: number;
+            };
 
-          await createDocumentFromBlob(
-            blob,
-            payload.fileName,
-            payload.fileSize,
-            blob.contentType ?? "application/octet-stream",
-            payload.folderId ?? null,
-          );
+            await createDocumentFromBlob(
+              blob,
+              payload.fileName,
+              payload.fileSize,
+              blob.contentType ?? "application/octet-stream",
+              payload.folderId ?? null,
+            );
+
+            const folderId = payload.folderId ? `/${payload.folderId}` : "";
+            revalidatePath(`/dashboard${folderId}`);
+            console.log(
+              `Document created successfully for: ${payload.fileName}`,
+            );
+          } catch (error) {
+            console.error("Error in onUploadCompleted:", error);
+          }
         },
       });
 

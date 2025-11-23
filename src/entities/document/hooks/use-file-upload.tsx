@@ -109,7 +109,6 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         action: null,
       });
 
-      router.refresh();
       return true;
     } catch (error) {
       console.error(`Upload error for ${file.name}:`, error);
