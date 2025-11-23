@@ -5,6 +5,8 @@ import { getStorageData } from "~/server/actions/dashboard.actions";
 import { getFolderPath } from "~/server/actions/folder.actions";
 import { DragDropZone } from "~/shared/components/ui/drag-drop-zone";
 import { DashboardFilters } from "~/features/dashboard-filters/ui";
+import { auth } from '~/server/auth';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage({
   params,
@@ -13,6 +15,12 @@ export default async function DashboardPage({
   params: Promise<{ slug?: string[] }>;
   searchParams: Promise<{ docType?: string; lastModified?: string }>;
 }) {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/");
+  }
+
   const { slug } = await params;
   const { docType, lastModified } = await searchParams;
 
