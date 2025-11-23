@@ -90,16 +90,13 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         return false;
       }
 
-      // In development onUploadCompleted never triggers, so we need to create the document manually
-      if (process.env.NODE_ENV === "development") {
-        await createDocumentFromBlob(
-          newBlob,
-          file.name,
-          file.size,
-          file.type,
-          folderId ?? null,
-        );
-      }
+      await createDocumentFromBlob(
+        newBlob,
+        file.name,
+        file.size,
+        file.type,
+        folderId ?? null,
+      );
 
       console.log(`Upload completed for: ${file.name}`);
       toast.success("Upload complete", {
@@ -109,6 +106,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         action: null,
       });
 
+      router.refresh();
       return true;
     } catch (error) {
       console.error(`Upload error for ${file.name}:`, error);

@@ -70,32 +70,6 @@ export async function POST(request: NextRequest) {
             callbackUrl,
           };
         },
-        onUploadCompleted: async ({ blob, tokenPayload }) => {
-          try {
-            const payload = JSON.parse(tokenPayload ?? "{}") as {
-              userId: string;
-              folderId: string | null;
-              fileName: string;
-              fileSize: number;
-            };
-
-            await createDocumentFromBlob(
-              blob,
-              payload.fileName,
-              payload.fileSize,
-              blob.contentType ?? "application/octet-stream",
-              payload.folderId ?? null,
-            );
-
-            const folderId = payload.folderId ? `/${payload.folderId}` : "";
-            revalidatePath(`/dashboard${folderId}`);
-            console.log(
-              `Document created successfully for: ${payload.fileName}`,
-            );
-          } catch (error) {
-            console.error("Error in onUploadCompleted:", error);
-          }
-        },
       });
 
       return NextResponse.json(jsonResponse);
