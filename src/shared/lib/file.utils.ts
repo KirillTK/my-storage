@@ -47,8 +47,9 @@ export async function downloadFileWithProgress(
     total: number;
     percentage: number;
   }) => void,
+  signal?: AbortSignal,
 ) {
-  const response = await fetch(url);
+  const response = await fetch(url, { signal });
 
   if (!response.ok) {
     throw new Error("Failed to download file");
@@ -64,31 +65,45 @@ export async function downloadFileWithProgress(
     throw new Error("No response body");
   }
 
-  while (true) {
-    const { done, value } = await reader.read();
+  try {
+    while (true) {
+      // Check if aborted
+      if (signal?.aborted) {
+        console.log(`Download cancelled for: ${filename}`);
+        reader.cancel();
+        return; // Exit gracefully without throwing
+      }
 
-    if (done) break;
+      const { done, value } = await reader.read();
 
-    chunks.push(value);
-    loaded += value.length;
+      if (done) break;
 
-    if (onProgress && total > 0) {
-      onProgress({
-        loaded,
-        total,
-        percentage: (loaded / total) * 100,
-      });
+      chunks.push(value);
+      loaded += value.length;
+
+      if (onProgress && total > 0) {
+        onProgress({
+          loaded,
+          total,
+          percentage: (loaded / total) * 100,
+        });
+      }
     }
-  }
 
-  // Create blob and download
-  const blob = new Blob(chunks as BlobPart[]);
-  const blobUrl = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = blobUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(blobUrl);
+    // Create blob and download
+    const blob = new Blob(chunks as BlobPart[]);
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(blobUrl);
+    console.log(`Download completed for: ${filename}`);
+  } catch (error) {
+    console.error(`Download error for ${filename}:`, error);
+    reader.cancel();
+    throw error;
+  }
 }

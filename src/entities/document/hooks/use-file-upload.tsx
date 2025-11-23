@@ -16,13 +16,24 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
   const router = useRouter();
 
   const uploadSingleFile = async (file: File): Promise<boolean> => {
+    const abortController = new AbortController();
+    let isCancelled = false;
     const toastId = toast.loading("Preparing upload...", {
       description: file.name,
     });
 
     try {
-      // Direct upload to Vercel Blob
-      const newBlob = await upload(file.name, file, {
+      // Create a promise that resolves to null when aborted
+      const abortPromise = new Promise<null>((resolve) => {
+        abortController.signal.addEventListener("abort", () => {
+          isCancelled = true;
+          console.log(`Upload cancelled for: ${file.name}`);
+          resolve(null);
+        });
+      });
+
+      // Race between upload and abort
+      const uploadPromise = upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
         clientPayload: JSON.stringify({
@@ -31,13 +42,15 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
           fileSize: file.size,
         }),
         onUploadProgress: (progress) => {
+          if (isCancelled) return;
+
           const percentage = (progress.loaded / progress.total) * 100;
 
           toast.loading(
-            <div className="w-full">
-              <div className="mb-2 flex items-center justify-between">
+            <div className="w-full min-w-[240px]">
+              <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="text-sm font-medium">Uploading...</span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted-foreground shrink-0 text-xs">
                   {Math.round(percentage)}%
                 </span>
               </div>
@@ -54,10 +67,28 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
             {
               id: toastId,
               description: `${formatBytes(progress.loaded)} / ${formatBytes(progress.total)}`,
+              action: {
+                label: "Cancel",
+                onClick: () => {
+                  abortController.abort();
+                },
+              },
             },
           );
         },
       });
+
+      const newBlob = await Promise.race([uploadPromise, abortPromise]);
+
+      // Check if upload was cancelled
+      if (newBlob === null || isCancelled) {
+        toast.info("Upload cancelled", {
+          id: toastId,
+          description: file.name,
+          duration: 2000,
+        });
+        return false;
+      }
 
       await createDocumentFromBlob(
         newBlob,
@@ -67,6 +98,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         folderId ?? null,
       );
 
+      console.log(`Upload completed for: ${file.name}`);
       toast.success("Upload complete", {
         id: toastId,
         description: file.name,
@@ -76,7 +108,8 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
       router.refresh();
       return true;
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error(`Upload error for ${file.name}:`, error);
+
       toast.error("Upload failed", {
         id: toastId,
         description:
