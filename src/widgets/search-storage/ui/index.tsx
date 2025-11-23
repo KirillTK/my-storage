@@ -113,6 +113,16 @@ export function SearchStorage() {
     setSelectedDocument(null);
   };
 
+  const handleInputFocus = () => {
+    if (query.length > 0) {
+      setIsOpen(true);
+    }
+  };
+
+  const handleChangeQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
   const showNoResults =
     !isLoading &&
     debouncedQuery.trim().length > 0 &&
@@ -127,7 +137,8 @@ export function SearchStorage() {
           type="text"
           placeholder="Search files and folders..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleChangeQuery}
+          onFocus={handleInputFocus}
           className="pr-24 pl-10"
         />
         <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-2">

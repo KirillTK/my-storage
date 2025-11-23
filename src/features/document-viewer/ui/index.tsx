@@ -6,9 +6,15 @@ import { DocumentActionsMenu } from "../components/document-actions-menu";
 import { RenameDocumentPopover } from "../components/rename-document-popover";
 import { DocumentPreviewModal } from "../components/document-preview-modal";
 import { Popover, PopoverAnchor } from "~/shared/components/ui/popover";
-import { getFileExtension, getFileNameWithoutExtension } from "~/shared/lib/file.utils";
+import {
+  getFileExtension,
+  getFileNameWithoutExtension,
+} from "~/shared/lib/file.utils";
 import { IMAGE_FORMATS } from "~/entities/document/const/image-format.const";
-import { ICON_FILE_TYPE_MAP, COLOR_FILE_TYPE_MAP } from "~/entities/document/const/icon-map-by-type.const";
+import {
+  ICON_FILE_TYPE_MAP,
+  COLOR_FILE_TYPE_MAP,
+} from "~/entities/document/const/icon-map-by-type.const";
 import Image from "next/image";
 
 interface DocumentViewerProps {
@@ -31,7 +37,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const fileNameWithoutExtension = getFileNameWithoutExtension(document.name);
 
   const isImage = IMAGE_FORMATS.includes(fileExtension ?? "");
-  
+
   // Get icon and color for file type
   const color = COLOR_FILE_TYPE_MAP.get(fileExtension ?? "") ?? {
     bg: "bg-primary/15",
@@ -48,17 +54,17 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
       >
         <div
           key={document.id}
-          className="group border-border bg-card hover:border-primary relative cursor-pointer rounded-lg border transition-all hover:shadow-md overflow-hidden"
+          className="group border-border bg-card hover:border-primary relative cursor-pointer overflow-hidden rounded-lg border transition-all hover:shadow-md"
         >
           <PopoverAnchor asChild>
             <div className="pointer-events-none absolute inset-0" />
           </PopoverAnchor>
-          
+
           {/* Header with filename and actions */}
-          <div className="flex items-center justify-between gap-2 p-3 border-b border-border/50">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className="border-border/50 flex items-center justify-between gap-2 border-b p-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
               <IconComponent className={`h-4 w-4 shrink-0 ${color.icon}`} />
-              <h3 className="text-foreground font-medium text-sm truncate">
+              <h3 className="text-foreground truncate text-sm font-medium">
                 {document.name}
               </h3>
             </div>
@@ -70,12 +76,12 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
           </div>
 
           {/* Large centered preview area */}
-          <div 
+          <div
             onClick={handleDocumentClick}
-            className="flex items-center justify-center p-8 min-h-[200px] bg-muted/30"
+            className="bg-muted/30 flex min-h-[200px] items-center justify-center p-8"
           >
             {isImage ? (
-              <div className="relative w-32 h-32 rounded-lg overflow-hidden shadow-sm ring-1 ring-border">
+              <div className="ring-border relative h-32 w-32 overflow-hidden rounded-lg shadow-sm ring-1">
                 <Image
                   src={document.blobUrl}
                   alt={document.name}
@@ -86,7 +92,9 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
                 />
               </div>
             ) : (
-              <div className={`flex items-center justify-center w-24 h-24 rounded-2xl ${color.bg}`}>
+              <div
+                className={`flex h-24 w-24 items-center justify-center rounded-2xl ${color.bg}`}
+              >
                 <IconComponent className={`h-12 w-12 ${color.icon}`} />
               </div>
             )}

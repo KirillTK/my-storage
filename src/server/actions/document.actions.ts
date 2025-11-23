@@ -1,9 +1,10 @@
 "use server";
 import { put, type PutBlobResult } from "@vercel/blob";
-import { eq, isNull, and, asc, sql } from "drizzle-orm";
+import { eq, isNull, and, asc, sql, ilike, gte, or } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { documents } from "../db/schema";
+import type { Filter } from "../types/filter.type";
 
 export type UploadProgress = {
   percentage: number;
@@ -120,25 +121,78 @@ export const renameDocument = async (documentId: string, name: string) => {
   await db.update(documents).set({ name }).where(eq(documents.id, documentId));
 };
 
-export const getDocumentsByFolderId = async (folderId: string | null) => {
+function getDateForPeriod(period: string): Date {
+  const now = new Date();
+  switch (period) {
+    case "today": {
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return today;
+    }
+    case "last7days": {
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      return sevenDaysAgo;
+    }
+    case "last30days": {
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      return thirtyDaysAgo;
+    }
+    case "thisyear": {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      return startOfYear;
+    }
+    default:
+      return now;
+  }
+}
+
+export const getDocumentsByFolderId = async (
+  folderId: string | null,
+  filter?: Partial<Filter>,
+) => {
   const session = await auth();
 
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
 
+  const conditions = [
+    eq(documents.uploadedById, session.user.id),
+    folderId ? eq(documents.folderId, folderId) : isNull(documents.folderId),
+    isNull(documents.deletedAt), // Only return non-deleted documents
+  ];
+
+  // Handle multiple document types with OR logic
+  if (filter?.docType) {
+    const docTypes = Array.isArray(filter.docType)
+      ? filter.docType
+      : [filter.docType];
+    if (docTypes.length > 0) {
+      const docTypeConditions = docTypes.map((type) =>
+        ilike(documents.mimeType, `%${type}%`),
+      );
+      conditions.push(or(...docTypeConditions)!);
+    }
+  }
+
+  // Handle multiple time periods with OR logic (take the earliest date)
+  if (filter?.lastModified) {
+    const periods = Array.isArray(filter.lastModified)
+      ? filter.lastModified
+      : [filter.lastModified];
+    if (periods.length > 0) {
+      // Get all dates and find the earliest one for OR logic
+      const dates = periods.map((period) => getDateForPeriod(period));
+      const earliestDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+      conditions.push(gte(documents.createdAt, earliestDate));
+    }
+  }
+
   return await db
     .select()
     .from(documents)
-    .where(
-      and(
-        eq(documents.uploadedById, session.user.id),
-        folderId
-          ? eq(documents.folderId, folderId)
-          : isNull(documents.folderId),
-        isNull(documents.deletedAt), // Only return non-deleted documents
-      ),
-    )
+    .where(and(...conditions))
     .orderBy(asc(documents.createdAt));
 };
 

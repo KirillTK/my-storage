@@ -3,8 +3,8 @@
 import { useState, useRef, type DragEvent, type ReactNode } from "react";
 import { Upload } from "lucide-react";
 import { useFileUpload } from "~/entities/document/hooks/use-file-upload";
-import { toast } from 'sonner';
-import { MAX_FILES_PER_UPLOAD } from '~/shared/lib/constants';
+import { toast } from "sonner";
+import { MAX_FILES_PER_UPLOAD } from "~/shared/lib/constants";
 
 interface DragDropZoneProps {
   folderId?: string | null;
@@ -49,9 +49,10 @@ export function DragDropZone({ folderId, children }: DragDropZoneProps) {
 
     const files = Array.from(e.dataTransfer.files);
 
-
     if (files.length > MAX_FILES_PER_UPLOAD) {
-      toast.error(`You can only upload up to ${MAX_FILES_PER_UPLOAD} files at once`);
+      toast.error(
+        `You can only upload up to ${MAX_FILES_PER_UPLOAD} files at once`,
+      );
       return;
     }
 

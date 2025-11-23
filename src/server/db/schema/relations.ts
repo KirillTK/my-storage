@@ -50,8 +50,11 @@ export const documentsRelations = relations(documents, ({ one, many }) => ({
   previousVersion: one(documents, {
     fields: [documents.previousVersionId],
     references: [documents.id],
+    relationName: "documentVersions",
   }),
-  versions: many(documents),
+  versions: many(documents, {
+    relationName: "documentVersions",
+  }),
 }));
 
 // Document permissions relations

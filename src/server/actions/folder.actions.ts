@@ -1,9 +1,10 @@
 "use server";
-import { eq, isNull, and } from "drizzle-orm";
+import { eq, isNull, and, gte } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
 import { folders } from "../db/schema";
+import type { Filter } from "../types/filter.type";
 
 export const createFolder = async (
   name: string,
@@ -62,8 +63,35 @@ export const restoreFolder = async (folderId: string) => {
     .where(eq(folders.id, folderId));
 };
 
+function getDateForPeriod(period: string): Date {
+  const now = new Date();
+  switch (period) {
+    case "today": {
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return today;
+    }
+    case "last7days": {
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      return sevenDaysAgo;
+    }
+    case "last30days": {
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      return thirtyDaysAgo;
+    }
+    case "thisyear": {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      return startOfYear;
+    }
+    default:
+      return now;
+  }
+}
+
 export const getFoldersByParentFolderId = async (
   parentFolderId: string | null,
+  filter?: Partial<Filter>,
 ) => {
   const session = await auth();
 
@@ -71,14 +99,29 @@ export const getFoldersByParentFolderId = async (
     throw new Error("Unauthorized");
   }
 
+  const conditions = [
+    eq(folders.ownerId, session.user.id),
+    parentFolderId
+      ? eq(folders.parentFolderId, parentFolderId)
+      : isNull(folders.parentFolderId),
+    isNull(folders.deletedAt), // Only return non-deleted folders
+  ];
+
+  // Handle multiple time periods with OR logic (take the earliest date)
+  if (filter?.lastModified) {
+    const periods = Array.isArray(filter.lastModified)
+      ? filter.lastModified
+      : [filter.lastModified];
+    if (periods.length > 0) {
+      // Get all dates and find the earliest one for OR logic
+      const dates = periods.map((period) => getDateForPeriod(period));
+      const earliestDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+      conditions.push(gte(folders.createdAt, earliestDate));
+    }
+  }
+
   return db.query.folders.findMany({
-    where: and(
-      eq(folders.ownerId, session.user.id),
-      parentFolderId
-        ? eq(folders.parentFolderId, parentFolderId)
-        : isNull(folders.parentFolderId),
-      isNull(folders.deletedAt), // Only return non-deleted folders
-    ),
+    where: and(...conditions),
     with: {
       children: true,
       documents: true,

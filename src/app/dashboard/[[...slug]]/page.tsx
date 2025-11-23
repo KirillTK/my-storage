@@ -4,26 +4,37 @@ import { extractLastUuid } from "~/shared/lib/uuid.utils";
 import { getStorageData } from "~/server/actions/dashboard.actions";
 import { getFolderPath } from "~/server/actions/folder.actions";
 import { DragDropZone } from "~/shared/components/ui/drag-drop-zone";
+import { DashboardFilters } from "~/features/dashboard-filters/ui";
 
 export default async function DashboardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ docType?: string; lastModified?: string }>;
 }) {
   const { slug } = await params;
+  const { docType, lastModified } = await searchParams;
+
   const folderId = extractLastUuid(slug ?? []);
 
-  const { folders, documents } = await getStorageData(folderId);
+  // Convert comma-separated strings to arrays
+  const docTypeArray = docType?.split(",").filter(Boolean);
+  const lastModifiedArray = lastModified?.split(",").filter(Boolean);
+
+  const { folders, documents } = await getStorageData(folderId, {
+    docType: docTypeArray,
+    lastModified: lastModifiedArray,
+  });
   const folderPath = await getFolderPath(folderId);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col gap-4">
       <FolderBreadcrumbs folderPath={folderPath} />
+      <DashboardFilters />
       <DragDropZone folderId={folderId}>
         <div className="flex-1 overflow-auto">
-          <div className="mt-4">
-            <StorageGrid folders={folders} documents={documents} />
-          </div>
+          <StorageGrid folders={folders} documents={documents} />
         </div>
       </DragDropZone>
     </div>

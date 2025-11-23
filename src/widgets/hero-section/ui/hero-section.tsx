@@ -33,7 +33,8 @@ export async function HeroSection() {
           </h2>
 
           <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-            A simple and efficient way to manage your digital files with folders, preview, and search.
+            A simple and efficient way to manage your digital files with
+            folders, preview, and search.
           </p>
 
           {/* CTA Buttons */}
@@ -108,11 +109,15 @@ export async function HeroSection() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-12">
             <div className="text-center">
-              <div className="text-foreground text-2xl font-bold">Unlimited</div>
+              <div className="text-foreground text-2xl font-bold">
+                Unlimited
+              </div>
               <div className="text-muted-foreground text-sm">Storage Space</div>
             </div>
             <div className="text-center">
-              <div className="text-foreground text-2xl font-bold">All Types</div>
+              <div className="text-foreground text-2xl font-bold">
+                All Types
+              </div>
               <div className="text-muted-foreground text-sm">File Support</div>
             </div>
             <div className="text-center">
