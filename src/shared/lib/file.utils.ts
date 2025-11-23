@@ -70,7 +70,7 @@ export async function downloadFileWithProgress(
       // Check if aborted
       if (signal?.aborted) {
         console.log(`Download cancelled for: ${filename}`);
-        reader.cancel();
+        await reader.cancel();
         return; // Exit gracefully without throwing
       }
 
@@ -103,7 +103,7 @@ export async function downloadFileWithProgress(
     console.log(`Download completed for: ${filename}`);
   } catch (error) {
     console.error(`Download error for ${filename}:`, error);
-    reader.cancel();
+    await reader.cancel();
     throw error;
   }
 }
