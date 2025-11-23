@@ -60,7 +60,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
                   style={{ width: `${percentage}%` }}
                 />
               </div>
-              <p className="text-muted-foreground mt-1 truncate text-xs max-w-[225px]">
+              <p className="text-muted-foreground mt-1 max-w-[225px] truncate text-xs">
                 {file.name}
               </p>
             </div>,

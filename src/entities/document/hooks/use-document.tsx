@@ -46,7 +46,7 @@ export function useDocument(document: DocumentModel) {
                   style={{ width: `${progress.percentage}%` }}
                 />
               </div>
-              <p className="text-muted-foreground mt-1 truncate text-xs max-w-[225px]">
+              <p className="text-muted-foreground mt-1 max-w-[225px] truncate text-xs">
                 {document.name}
               </p>
             </div>,
