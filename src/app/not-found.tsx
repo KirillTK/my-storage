@@ -8,7 +8,7 @@ export default function NotFound() {
       <div className="mx-auto max-w-md text-center">
         {/* 404 Number */}
         <div className="mb-8">
-          <h1 className="bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-9xl font-bold text-transparent">
+          <h1 className="from-primary to-primary/60 bg-gradient-to-br bg-clip-text text-9xl font-bold text-transparent">
             404
           </h1>
         </div>
@@ -46,10 +46,7 @@ export default function NotFound() {
         {/* Help Text */}
         <p className="text-muted-foreground mt-8 text-sm">
           Need help?{" "}
-          <Link
-            href="/"
-            className="text-primary hover:underline font-medium"
-          >
+          <Link href="/" className="text-primary font-medium hover:underline">
             Contact support
           </Link>
         </p>
@@ -57,4 +54,3 @@ export default function NotFound() {
     </div>
   );
 }
-

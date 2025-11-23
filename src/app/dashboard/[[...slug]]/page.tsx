@@ -5,8 +5,8 @@ import { getStorageData } from "~/server/actions/dashboard.actions";
 import { getFolderPath } from "~/server/actions/folder.actions";
 import { DragDropZone } from "~/shared/components/ui/drag-drop-zone";
 import { DashboardFilters } from "~/features/dashboard-filters/ui";
-import { auth } from '~/server/auth';
-import { redirect } from 'next/navigation';
+import { auth } from "~/server/auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage({
   params,

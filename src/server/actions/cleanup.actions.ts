@@ -19,7 +19,9 @@ export async function cleanupSoftDeletedDocuments() {
       .from(documents)
       .where(isNotNull(documents.deletedAt));
 
-    console.log(`[Cleanup] Found ${documentsToDelete.length} soft-deleted documents`);
+    console.log(
+      `[Cleanup] Found ${documentsToDelete.length} soft-deleted documents`,
+    );
 
     if (documentsToDelete.length === 0) {
       return {
@@ -42,7 +44,10 @@ export async function cleanupSoftDeletedDocuments() {
             await del(document.blobUrl);
             console.log(`[Cleanup] Deleted blob: ${document.blobUrl}`);
           } catch (blobError) {
-            console.error(`[Cleanup] Error deleting blob for document ${document.id}:`, blobError);
+            console.error(
+              `[Cleanup] Error deleting blob for document ${document.id}:`,
+              blobError,
+            );
             // Continue with database deletion even if blob deletion fails
           }
         }
@@ -51,23 +56,28 @@ export async function cleanupSoftDeletedDocuments() {
         await db
           .delete(documents)
           .where(
-            and(
-              eq(documents.id, document.id),
-              isNotNull(documents.deletedAt)
-            )
+            and(eq(documents.id, document.id), isNotNull(documents.deletedAt)),
           );
 
         successCount++;
-        console.log(`[Cleanup] Successfully permanently deleted soft-deleted document: ${document.id} (${document.name})`);
+        console.log(
+          `[Cleanup] Successfully permanently deleted soft-deleted document: ${document.id} (${document.name})`,
+        );
       } catch (error) {
         errorCount++;
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         errors.push({ documentId: document.id, error: errorMessage });
-        console.error(`[Cleanup] Error deleting document ${document.id}:`, error);
+        console.error(
+          `[Cleanup] Error deleting document ${document.id}:`,
+          error,
+        );
       }
     }
 
-    console.log(`[Cleanup] Cleanup completed. Success: ${successCount}, Errors: ${errorCount}`);
+    console.log(
+      `[Cleanup] Cleanup completed. Success: ${successCount}, Errors: ${errorCount}`,
+    );
 
     return {
       success: errorCount === 0,
@@ -82,7 +92,8 @@ export async function cleanupSoftDeletedDocuments() {
       success: false,
       deletedCount: 0,
       errorCount: 0,
-      message: error instanceof Error ? error.message : "Unknown error occurred",
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
     };
   }
 }
