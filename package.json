@@ -6,6 +6,7 @@
   "scripts": {
     "build": "next build",
     "check": "next lint && tsc --noEmit",
+    "cron:test": "curl -X GET http://localhost:3000/api/cron/cleanup",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
