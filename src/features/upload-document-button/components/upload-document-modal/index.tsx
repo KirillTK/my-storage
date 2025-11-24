@@ -231,26 +231,23 @@ export function UploadDocumentModal({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className={`group w-full cursor-pointer rounded-lg border-2 border-dashed p-8 transition-colors ${
-                  isDragging
+                className={`group w-full cursor-pointer rounded-lg border-2 border-dashed p-8 transition-colors ${isDragging
                     ? "border-primary bg-primary/5"
                     : "border-border hover:border-primary"
-                }`}
+                  }`}
               >
                 <div className="flex flex-col items-center gap-2">
                   <div
-                    className={`rounded-full p-3 transition-colors ${
-                      isDragging
+                    className={`rounded-full p-3 transition-colors ${isDragging
                         ? "bg-primary/20"
                         : "bg-muted group-hover:bg-primary/10"
-                    }`}
+                      }`}
                   >
                     <Upload
-                      className={`h-6 w-6 transition-colors ${
-                        isDragging
+                      className={`h-6 w-6 transition-colors ${isDragging
                           ? "text-primary"
                           : "text-muted-foreground group-hover:text-primary"
-                      }`}
+                        }`}
                     />
                   </div>
                   <p className="text-foreground text-sm font-medium">
@@ -265,7 +262,7 @@ export function UploadDocumentModal({
               </button>
             ) : (
               <div className="space-y-3">
-                <div className="max-h-[300px] space-y-2 overflow-y-auto">
+                <div className="max-h-[300px] h-[170px] space-y-2 overflow-y-auto">
                   {selectedFiles.map((file) => (
                     <div
                       key={file.id}
